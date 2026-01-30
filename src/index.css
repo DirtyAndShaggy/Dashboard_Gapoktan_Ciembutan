@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/* === Helvetica Rounded (Logo title) === */
+@font-face {
+  font-family: "HelveticaRounded";
+  src: url("./assets/fonts/helvetica-rounded.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* === Helvetica Light (Subtitle) === */
+@font-face {
+  font-family: "HelveticaLight";
+  src: url("./assets/fonts/helvetica-light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* === Poppins (Navigation & UI) === */
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/poppins-medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
