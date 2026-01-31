@@ -2,9 +2,10 @@ import Sidebar from "../components/sidebar";
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex">
       <Sidebar />
-      <main className="flex-1 p-6 bg-white">
+
+      <main className="flex-1 bg-gray-50 min-h-screen">
         {children}
       </main>
     </div>

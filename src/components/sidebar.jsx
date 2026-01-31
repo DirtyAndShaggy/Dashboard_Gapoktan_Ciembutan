@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
+
 
 // ===== Logo =====
 import Logo from "../assets/logo/logo-ciembutan-transparent.png";
@@ -12,25 +14,21 @@ import SettingsIcon from "../assets/icons/slack.png";
 import PancakeIcon from "../assets/icons/menu.png";
 import CloseIcon from "../assets/icons/x.png";
 
-function NavItem({ icon, label, active }) {
+function NavItem({ icon, label, to }) {
   return (
-    <div
-      className={`
-        flex items-center gap-3 px-4 py-3 rounded-xl
-        cursor-pointer select-none
-        transition-colors duration-150   // FIX: limit transition work
-        ${active ? "bg-white/30" : "hover:bg-white/20"}
-      `}
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer
+         transition-colors duration-150
+         ${isActive ? "bg-white/30" : "hover:bg-white/20"}`
+      }
     >
-      <img
-        src={icon}
-        alt={label}
-        className="w-5 h-5 pointer-events-none"
-      />
+      <img src={icon} alt={label} className="w-5 h-5 pointer-events-none" />
       <span className="text-white text-sm font-medium font-ui">
         {label}
       </span>
-    </div>
+    </NavLink>
   );
 }
 
@@ -125,11 +123,11 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex flex-col gap-2">
-          <NavItem icon={DashboardIcon} label="Dasbor" active />
-          <NavItem icon={AnalysisIcon} label="Analisis" />
-          <NavItem icon={HarvestIcon} label="Hasil panen" />
-          <NavItem icon={CalendarIcon} label="Kalender" />
-          <NavItem icon={SettingsIcon} label="Pengaturan" />
+          <NavItem icon={DashboardIcon} label="Dasbor" to="/" />
+          <NavItem icon={AnalysisIcon} label="Analisis" to="/Analysis" />
+          <NavItem icon={HarvestIcon} label="Hasil panen" to="/Harvest" />
+          <NavItem icon={CalendarIcon} label="Kalender" to="/Calendar" />
+          <NavItem icon={SettingsIcon} label="Pengaturan" to="/Settings" />
         </nav>
       </aside>
     </>

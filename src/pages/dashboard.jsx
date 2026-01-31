@@ -1,7 +1,7 @@
 export default function Dashboard() {
   return (
-    <div>
-      {/* Dashboard content will go here */}
+    <div className="p-6">
+      <h1 className="text-xl font-bold">Dashboard</h1>
     </div>
   );
 }
