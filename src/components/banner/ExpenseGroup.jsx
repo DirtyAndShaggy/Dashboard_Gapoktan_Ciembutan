@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { formatRupiah } from "../../utils/formatRupiah";
+import ChevronDown from "../../assets/icons/chevron-down.png";
 
 export default function ExpenseGroup({ title, items }) {
   const [open, setOpen] = useState(false);
@@ -7,47 +8,58 @@ export default function ExpenseGroup({ title, items }) {
   const total = items.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="border rounded-lg p-3">
-      {/* Header */}
-      <div
-        className="flex justify-between items-center cursor-pointer md:cursor-default"
+    <div className="border border-gray-100 rounded-lg overflow-hidden">
+      {/* Header / Summary */}
+      <button
         onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-3 py-3
+                   text-left bg-gray-50 md:bg-transparent
+                   md:cursor-default"
       >
-        <h4 className="text-sm font-semibold text-gray-800">
-          {title}
-        </h4>
-        <span className="text-sm font-medium text-red-600">
-          {formatRupiah(total)}
-        </span>
-      </div>
+        <div>
+          <h4 className="text-sm font-semibold text-gray-800">
+            {title}
+          </h4>
+          <p className="text-xs text-gray-500 md:hidden">
+            Ketuk untuk melihat rincian
+          </p>
+        </div>
 
-      {/* Sub items – desktop always visible */}
-      <div className="hidden md:block mt-2 space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-red-600">
+            {formatRupiah(total)}
+          </span>
+
+          {/* Chevron – mobile only */}
+          <img
+            src={ChevronDown}
+            alt=""
+            className={`w-4 h-4 transition-transform md:hidden
+              ${open ? "rotate-180" : ""}`}
+          />
+        </div>
+      </button>
+
+      {/* Detail items */}
+      <div
+        className={`
+          px-3 pb-3 space-y-1 text-sm text-gray-600
+          ${open ? "block" : "hidden"}
+          md:block
+        `}
+      >
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="flex justify-between text-sm text-gray-600"
+            className="flex justify-between"
           >
             <span>{item.label}</span>
-            <span>{formatRupiah(item.value)}</span>
+            <span className="font-medium">
+              {formatRupiah(item.value)}
+            </span>
           </div>
         ))}
       </div>
-
-      {/* Sub items – mobile collapsible */}
-      {open && (
-        <div className="md:hidden mt-2 space-y-1">
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="flex justify-between text-sm text-gray-600"
-            >
-              <span>{item.label}</span>
-              <span>{formatRupiah(item.value)}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
