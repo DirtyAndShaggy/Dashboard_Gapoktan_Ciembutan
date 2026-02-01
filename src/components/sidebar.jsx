@@ -124,10 +124,10 @@ export default function Sidebar() {
         {/* Navigation */}
         <nav className="flex flex-col gap-2">
           <NavItem icon={DashboardIcon} label="Dasbor" to="/" />
-          <NavItem icon={AnalysisIcon} label="Analisis" to="/Analysis" />
-          <NavItem icon={HarvestIcon} label="Hasil panen" to="/Harvest" />
-          <NavItem icon={CalendarIcon} label="Kalender" to="/Calendar" />
-          <NavItem icon={SettingsIcon} label="Pengaturan" to="/Settings" />
+          <NavItem icon={AnalysisIcon} label="Analisis" to="/analysis" />
+          <NavItem icon={HarvestIcon} label="Hasil panen" to="/harvest" />
+          <NavItem icon={CalendarIcon} label="Kalender" to="/calendar" />
+          <NavItem icon={SettingsIcon} label="Pengaturan" to="/settings" />
         </nav>
       </aside>
     </>

@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 
-import DashboardLayout from "./layouts/DashboardLayout";
+import DashboardLayout from "./layouts/Dashboardlayout";
 
 import Dashboard from "./pages/Dashboard";
-import Analysis from "./pages/Analysis.jsx";
+import Analysis from "./pages/Analysis";
 import Harvest from "./pages/Harvest";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
