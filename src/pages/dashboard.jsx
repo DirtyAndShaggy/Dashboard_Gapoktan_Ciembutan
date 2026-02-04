@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import FinanceBanner from "@/components/banner/FinanceBanner";
-
 import TotalPanenByVarietasChart from "@/components/charts/TotalPanenByVarietasChart";
 import ProduktivitasByVarietasChart from "@/components/charts/ProduktivitasByVarietasChart";
 import HarvestTrendChart from "@/components/charts/HarvestTrendChart";
@@ -85,7 +84,7 @@ export default function Dashboard() {
       {/* Line chart */}
       <div className="bg-white rounded-xl p-4 shadow-sm">
         <h3 className="text-sm font-semibold text-gray-700 mb-2">
-          Tren Panen Tahunan per Varietas
+          Tren Panen Tahunan per Varietas (kg)
         </h3>
         <HarvestTrendChart data={trendData} />
       </div>

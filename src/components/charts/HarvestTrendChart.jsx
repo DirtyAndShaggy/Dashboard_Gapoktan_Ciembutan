@@ -6,8 +6,36 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  CartesianGrid
+  CartesianGrid,
 } from "recharts";
+
+import {
+  VARIETAS_COLORS,
+  DEFAULT_VARIETAS_COLOR
+} from "@/constants/varietasColors";
+
+/* ----------------------------
+   Custom vertical legend (mobile)
+---------------------------- */
+function VerticalLegend({ payload }) {
+  if (!payload || payload.length === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-2 text-sm">
+      {payload.map(item => (
+        <div key={item.value} className="flex items-center gap-2">
+          <span
+            className="inline-block w-3 h-3 rounded-sm"
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="text-gray-700">
+            {item.value.replace(/_/g, " ")}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function HarvestTrendChart({ data }) {
   if (!data || data.length === 0) {
@@ -18,45 +46,61 @@ export default function HarvestTrendChart({ data }) {
     );
   }
 
-  // Get varietas keys dynamically (exclude "year")
+  // Dynamic varietas keys (exclude "year")
   const varietasKeys = Object.keys(data[0]).filter(
     key => key !== "year"
   );
 
   return (
-    <ResponsiveContainer width="100%" height={320}>
-      <LineChart
-        data={data}
-        margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
+    <div className="w-full">
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={320}>
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
 
-        <XAxis dataKey="year" />
+          <XAxis dataKey="year" />
 
-        <YAxis
-          tickFormatter={value =>
-            value >= 1000 ? `${value / 1000}k` : value
-          }
-        />
-
-        <Tooltip
-          formatter={value => [`${value.toLocaleString()} kg`, "Panen"]}
-          labelFormatter={label => `Tahun: ${label}`}
-        />
-
-        <Legend />
-
-        {varietasKeys.map(varietas => (
-          <Line
-            key={varietas}
-            type="monotone"
-            dataKey={varietas}
-            strokeWidth={2}
-            dot={{ r: 3 }}
-            activeDot={{ r: 6 }}
+          <YAxis
+            tickFormatter={value =>
+              value >= 1000 ? `${value / 1000}k` : value
+            }
           />
-        ))}
-      </LineChart>
-    </ResponsiveContainer>
+
+          <Tooltip
+            formatter={value => [`${value.toLocaleString()} kg`, "Panen"]}
+            labelFormatter={label => `Tahun: ${label}`}
+          />
+
+          {/* Desktop legend (horizontal, under chart) */}
+          <Legend
+            className="hidden md:block"
+            wrapperStyle={{ paddingTop: 12 }}
+            formatter={value => value.replace(/_/g, " ")}
+          />
+
+          {varietasKeys.map(varietas => (
+            <Line
+              key={varietas}
+              type="monotone"
+              dataKey={varietas}
+              stroke={
+                VARIETAS_COLORS[varietas] || DEFAULT_VARIETAS_COLOR
+              }
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 6 }}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+
+      {/* Mobile legend (vertical, below chart) */}
+      <div className="mt-3 md:hidden">
+        <Legend content={<VerticalLegend />} />
+      </div>
+    </div>
   );
 }
