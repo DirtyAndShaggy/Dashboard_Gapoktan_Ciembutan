@@ -1,15 +1,14 @@
-import { financeData } from "../../data/financeData";
 import IncomeCard from "./IncomeCard";
 import ExpenseGroup from "./ExpenseGroup";
 import SummaryStrip from "./SummaryStrip";
 
-export default function FinanceBanner() {
-  const totalIncome = financeData.income.reduce(
+export default function FinanceBanner({ banner, keuangan }) {
+  const totalIncome = keuangan.income.reduce(
     (sum, item) => sum + item.value,
     0
   );
 
-  const totalExpense = financeData.expenses.reduce(
+  const totalExpense = keuangan.expenses.reduce(
     (sum, group) =>
       sum + group.items.reduce((s, item) => s + item.value, 0),
     0
@@ -20,11 +19,9 @@ export default function FinanceBanner() {
       {/* Header */}
       <div className="mb-5">
         <h2 className="text-lg font-bold text-gray-800">
-          Ringkasan Pendapatan & Belanja Desa
+          Ringkasan Pendapatan & Belanja Desa Anggaran {banner.tahun}
         </h2>
-        <p className="text-sm text-gray-500">
-          Data keuangan sektor pertanian (ringkas)
-        </p>
+        <p className="text-sm text-gray-500">{banner.subtitle}</p>
       </div>
 
       {/* Content */}
@@ -34,7 +31,7 @@ export default function FinanceBanner() {
           <p className="text-sm font-semibold text-gray-700 mb-3">
             Pendapatan
           </p>
-          <IncomeCard income={financeData.income} />
+          <IncomeCard income={keuangan.income} />
         </div>
 
         {/* Belanja */}
@@ -45,7 +42,7 @@ export default function FinanceBanner() {
 
           {/* Scroll container to prevent insane height */}
           <div className="space-y-3 max-h-[360px] overflow-y-auto pr-2">
-            {financeData.expenses.map((group, idx) => (
+            {keuangan.expenses.map((group, idx) => (
               <ExpenseGroup
                 key={idx}
                 title={group.title}
