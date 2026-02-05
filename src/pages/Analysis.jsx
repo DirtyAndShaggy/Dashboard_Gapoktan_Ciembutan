@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-
+import HarvestByFarmingMethodChart from "@/components/charts/HarvestByFarmingMethodChart";
+import TotalPanenByVarietasGroupChart from "@/components/charts/TotalPanenByVarietasGroupChart";
+import HarvestVarietasTrendGroupChart from "@/components/charts/HarvestVarietasTrendGroupChart";
+import TotalPanenGroupCurrentYearChart from "@/components/charts/TotalPanenGroupCurrentYearChart";
 import ProduktivitasGroupChart from "@/components/charts/ProduktivitasGroupChart";
 import HarvestYoYComparisonChart from "@/components/charts/HarvestYoYComparisonChart";
 
@@ -134,6 +137,27 @@ export default function Analysis() {
           tahun={tahun}
           musim={musim}
         />
+        <TotalPanenGroupCurrentYearChart
+        panen={panen}
+        kelompokTani={kelompokTani}
+        tahun={tahun}
+      />
+        <HarvestByFarmingMethodChart
+        panen={panen}
+        kelompokTani={kelompokTani}
+        tahun={tahun}
+        musim={musim}
+      />
+        <TotalPanenByVarietasGroupChart
+        panen={panen}
+        kelompokTani={kelompokTani}
+        tahun={tahun}
+        musim={musim}
+      />
+        <HarvestVarietasTrendGroupChart
+        panen={panen}
+        kelompokTani={kelompokTani}
+      />
       </div>
     </div>
   );
