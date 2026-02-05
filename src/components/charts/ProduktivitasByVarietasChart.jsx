@@ -5,10 +5,70 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid
+  CartesianGrid,
+  Cell
 } from "recharts";
 
+import {
+  VARIETAS_COLORS,
+  DEFAULT_VARIETAS_COLOR
+} from "@/constants/varietasColors";
+
+import { useIsMobile } from "@/utils/useIsMobile";
+
+/* ----------------------------
+   Custom vertical legend (mobile)
+---------------------------- */
+function VerticalLegend({ payload }) {
+  if (!payload || payload.length === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-2 text-sm">
+      {payload.map(item => (
+        <div key={item.value} className="flex items-center gap-2">
+          <span
+            className="inline-block w-3 h-3 rounded-sm"
+            style={{ backgroundColor: item.color }}
+          />
+          <span className="text-gray-700">
+            {item.value.replace(/_/g, " ")}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ----------------------------
+   Multiline X-axis tick (desktop)
+---------------------------- */
+function MultilineXAxisTick({ x, y, payload }) {
+  const words = payload.value.replace(/_/g, " ").split(" ");
+
+  return (
+    <g transform={`translate(${x},${y + 10})`}>
+      <text
+        textAnchor="middle"
+        fill="#4b5563"
+        fontSize={12}
+      >
+        {words.map((word, index) => (
+          <tspan
+            key={index}
+            x={0}
+            dy={index === 0 ? 0 : 14}
+          >
+            {word}
+          </tspan>
+        ))}
+      </text>
+    </g>
+  );
+}
+
 export default function ProduktivitasByVarietasChart({ data }) {
+  const isMobile = useIsMobile();
+
   if (!data || data.length === 0) {
     return (
       <div className="text-sm text-gray-400 text-center py-10">
@@ -18,40 +78,71 @@ export default function ProduktivitasByVarietasChart({ data }) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        data={data}
-        margin={{ top: 10, right: 20, left: 10, bottom: 40 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
+    <div className="w-full">
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={data}
+          margin={{
+            top: 10,
+            right: 20,
+            left: 10,
+            bottom: isMobile ? 10 : 30
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
 
-        <XAxis
-          dataKey="varietas"
-          angle={-20}
-          textAnchor="end"
-          interval={0}
-          height={60}
-        />
+          {/* Desktop-only X-axis labels */}
+          <XAxis
+            dataKey="varietas"
+            interval={0}
+            tick={isMobile ? false : <MultilineXAxisTick />}
+            axisLine={!isMobile}
+            height={isMobile ? 0 : 50}
+          />
 
-        <YAxis
-          tickFormatter={value =>
-            value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value
-          }
-        />
+          <YAxis
+            tickFormatter={value =>
+              value >= 1000 ? `${(value / 1000).toFixed(1)}k` : value
+            }
+          />
 
-        <Tooltip
-          formatter={value => [
-            `${Math.round(value).toLocaleString()} kg/ha`,
-            "Produktivitas"
-          ]}
-          labelFormatter={label => `Varietas: ${label}`}
-        />
+          <Tooltip
+            formatter={value => [
+              `${Math.round(value).toLocaleString()} kg/ha`,
+              "Produktivitas"
+            ]}
+            labelFormatter={label =>
+              `Varietas: ${label.replace(/_/g, " ")}`
+            }
+          />
 
-        <Bar
-          dataKey="kgPerHa"
-          radius={[6, 6, 0, 0]}
-        />
-      </BarChart>
-    </ResponsiveContainer>
+          <Bar dataKey="kgPerHa" radius={[6, 6, 0, 0]}>
+            {data.map(entry => (
+              <Cell
+                key={entry.varietas}
+                fill={
+                  VARIETAS_COLORS[entry.varietas] ||
+                  DEFAULT_VARIETAS_COLOR
+                }
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+
+      {/* Mobile legend ONLY */}
+      {isMobile && (
+        <div className="mt-3">
+          <VerticalLegend
+            payload={data.map(item => ({
+              value: item.varietas,
+              color:
+                VARIETAS_COLORS[item.varietas] ||
+                DEFAULT_VARIETAS_COLOR
+            }))}
+          />
+        </div>
+      )}
+    </div>
   );
 }

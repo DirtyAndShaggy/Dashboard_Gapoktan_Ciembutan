@@ -1,9 +1,9 @@
 export const VARIETAS_COLORS = {
-  Padi_Putih: "#fffb00",   // soft white / silver
-  Padi_Merah: "#ef4444",   // red
-  Padi_Hitam: "#111827",   // near black
-  Padi_Coklat: "#92400e",  // brown
-  Padi_Mix: "#10b981"      // green (mixed)
+  Padi_Putih: "#fffb00",   
+  Padi_Merah: "#ef4444",   
+  Padi_Hitam: "#111827",   
+  Padi_Coklat: "#92400e",  
+  Padi_Mix: "#10b981"      
 };
 
 // fallback color if varietas is unknown

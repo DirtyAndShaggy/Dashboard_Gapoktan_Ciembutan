@@ -96,11 +96,6 @@ export default function HarvestTrendChart({ data }) {
           ))}
         </LineChart>
       </ResponsiveContainer>
-
-      {/* Mobile legend (vertical, below chart) */}
-      <div className="mt-3 md:hidden">
-        <Legend content={<VerticalLegend />} />
-      </div>
     </div>
   );
 }
