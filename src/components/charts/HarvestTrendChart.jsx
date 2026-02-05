@@ -48,7 +48,7 @@ export default function HarvestTrendChart({ data }) {
 
   // Dynamic varietas keys (exclude "year")
   const varietasKeys = Object.keys(data[0]).filter(
-    key => key !== "year"
+    key => key !== "tahun"
   );
 
   return (
@@ -61,7 +61,7 @@ export default function HarvestTrendChart({ data }) {
         >
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="year" />
+          <XAxis dataKey="tahun" />
 
           <YAxis
             tickFormatter={value =>
