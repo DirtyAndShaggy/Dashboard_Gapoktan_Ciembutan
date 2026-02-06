@@ -51,7 +51,7 @@ export default function HarvestTrendChart({ data }) {
       (a, b) => a.tahun - b.tahun
    );
 
-   const recentData = sortedData.slice(-10);
+   const recentData = sortedData.slice(-4);
 
    // Dynamic varietas keys (exclude "tahun")
     const varietasKeys = Object.keys(recentData[0]).filter(

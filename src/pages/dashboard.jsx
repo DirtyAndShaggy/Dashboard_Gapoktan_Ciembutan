@@ -53,8 +53,21 @@ export default function Dashboard() {
   ---------------------------- */
   const { panen, banner, keuangan } = dashboardData;
 
-  const totalPanenData = getTotalPanenByVarietas(panen, banner.tahun);
-  const produktivitasData = getAvgProduktivitasByVarietas(panen, banner.tahun);
+  // 🔥 CURRENT YEAR = latest year available in database
+  const years = panen
+    .map(item => Number(item.tahun))
+    .filter(Boolean);
+
+  const currentYear = years.length ? Math.max(...years) : null;
+
+  const totalPanenData = currentYear
+    ? getTotalPanenByVarietas(panen, currentYear)
+    : [];
+
+  const produktivitasData = currentYear
+    ? getAvgProduktivitasByVarietas(panen, currentYear)
+    : [];
+
   const trendData = getTrendByVarietas(panen);
 
   /* ----------------------------
@@ -68,14 +81,16 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Total Panen Desa per Varietas ({banner.tahun})
+            Total Panen Desa per Varietas{" "}
+            {currentYear ? `(${currentYear})` : ""}
           </h3>
           <TotalPanenByVarietasChart data={totalPanenData} />
         </div>
 
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-             Rata-rata Produktivitas ({banner.tahun}) (kg/ha)
+            Rata-rata Produktivitas{" "}
+            {currentYear ? `(${currentYear})` : ""} (kg/ha)
           </h3>
           <ProduktivitasByVarietasChart data={produktivitasData} />
         </div>
@@ -88,8 +103,6 @@ export default function Dashboard() {
         </h3>
         <HarvestTrendChart data={trendData} />
       </div>
-
-      {/* Bar Chart Current Year */}
     </div>
   );
 }

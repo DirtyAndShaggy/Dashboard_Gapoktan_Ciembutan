@@ -45,12 +45,11 @@ export default function Analysis() {
      ========================================================= */
   const farmerGroups = [...new Set(panen.map(p => p.kelompokTani))];
 
-  const currentYear = new Date().getFullYear();
-  const minYear = currentYear - 9;
-
   const years = [...new Set(panen.map(p => Number(p.tahun)))]
-    .filter(y => y >= minYear && y <= currentYear)
-    .sort((a, b) => b - a);
+    .filter(Boolean)
+    .sort((a, b) => b - a)
+    .slice(0, 10);
+
 
   /* =========================================================
      Initialize filters once data is ready
