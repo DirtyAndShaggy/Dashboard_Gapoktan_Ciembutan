@@ -92,7 +92,7 @@ export default function HarvestByFarmingMethodChart({
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ left: 80, right: 24 }}
+          margin={{ left: 0, right: 24 }}
         >
           <XAxis
             type="number"

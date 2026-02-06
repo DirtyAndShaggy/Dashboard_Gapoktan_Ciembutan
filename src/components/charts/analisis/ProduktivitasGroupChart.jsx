@@ -97,7 +97,7 @@ export default function ProduktivitasGroupChart({
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ left: 60, right: 24 }}
+          margin={{ left: -30, right: 24 }}
         >
           <XAxis
             type="number"

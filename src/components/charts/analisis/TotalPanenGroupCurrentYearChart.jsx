@@ -8,6 +8,8 @@ import {
   Cell
 } from "recharts";
 
+import { useIsMobile } from "@/utils/useIsMobile";
+
 /* ----------------------------
    Season colors
 ---------------------------- */
@@ -28,11 +30,41 @@ const MUSIM_LABELS = {
   MT3: "MT3 (Kemarau)"
 };
 
+/* ----------------------------
+   Vertical legend (mobile)
+---------------------------- */
+function MusimVerticalLegend({ data }) {
+  return (
+    <div className="flex flex-col gap-2 text-sm mt-3">
+      {data.map(item => (
+        <div
+          key={item.musim}
+          className="flex items-center gap-2"
+        >
+          <span
+            className="inline-block w-3 h-3 rounded-sm"
+            style={{
+              backgroundColor:
+                MUSIM_COLORS[item.musim] ||
+                DEFAULT_MUSIM_COLOR
+            }}
+          />
+          <span className="text-gray-700">
+            {MUSIM_LABELS[item.musim] || item.musim}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TotalPanenGroupCurrentYearChart({
   panen,
   kelompokTani,
   tahun
 }) {
+  const isMobile = useIsMobile();
+
   /* ----------------------------
      Aggregate total harvest per season
   ---------------------------- */
@@ -77,16 +109,22 @@ export default function TotalPanenGroupCurrentYearChart({
       <ResponsiveContainer width="100%" height={250}>
         <BarChart
           data={data}
-          margin={{ top: 10, right: 20, left: 10, bottom: 20 }}
+          margin={{
+            top: 10,
+            right: 20,
+            left: 10,
+            bottom: isMobile ? 10 : 30
+          }}
         >
           <XAxis
             dataKey="musim"
+            tick={isMobile ? false : true}
             tickFormatter={v => MUSIM_LABELS[v] || v}
+            height={isMobile ? 0 : 40}
+            axisLine={!isMobile}
           />
 
-          <YAxis
-             tick={{ fontSize: 12 }}
-          />
+          <YAxis tick={{ fontSize: 12 }} />
 
           <Tooltip
             formatter={value => [
@@ -111,6 +149,9 @@ export default function TotalPanenGroupCurrentYearChart({
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+
+      {/* Mobile legend */}
+      {isMobile && <MusimVerticalLegend data={data} />}
     </div>
   );
 }

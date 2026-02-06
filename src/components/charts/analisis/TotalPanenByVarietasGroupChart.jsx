@@ -14,20 +14,18 @@ import {
 } from "@/constants/varietasColors";
 
 import { getGroupHarvestByVarietas } from "@/utils/panenStats";
+import { useIsMobile } from "@/utils/useIsMobile";
 
 /* ----------------------------
-   Custom X-axis tick with varietas color
+   Custom colored X-axis tick (desktop)
 ---------------------------- */
 function VarietasXAxisTick({ x, y, payload }) {
   const color =
     VARIETAS_COLORS[payload.value] || DEFAULT_VARIETAS_COLOR;
 
   return (
-    <g transform={`translate(${x},${y})`}>
+    <g transform={`translate(${x},${y + 10})`}>
       <text
-        x={0}
-        y={10}
-        dy={10}
         textAnchor="middle"
         fill={color}
         fontSize={12}
@@ -38,12 +36,42 @@ function VarietasXAxisTick({ x, y, payload }) {
   );
 }
 
+/* ----------------------------
+   Vertical legend (mobile)
+---------------------------- */
+function VerticalLegend({ data }) {
+  return (
+    <div className="flex flex-col gap-2 text-sm mt-3">
+      {data.map(item => (
+        <div
+          key={item.varietas}
+          className="flex items-center gap-2"
+        >
+          <span
+            className="inline-block w-3 h-3 rounded-sm"
+            style={{
+              backgroundColor:
+                VARIETAS_COLORS[item.varietas] ||
+                DEFAULT_VARIETAS_COLOR
+            }}
+          />
+          <span className="text-gray-700">
+            {item.varietas.replace(/_/g, " ")}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function TotalPanenByVarietasGroupChart({
   panen,
   kelompokTani,
   tahun,
   musim
 }) {
+  const isMobile = useIsMobile();
+
   const data = getGroupHarvestByVarietas(
     panen,
     kelompokTani,
@@ -72,18 +100,22 @@ export default function TotalPanenByVarietasGroupChart({
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
           data={data}
-          margin={{ top: 10, right: 20, left: 10, bottom: 40 }}
+          margin={{
+            top: 10,
+            right: 20,
+            left: 10,
+            bottom: isMobile ? 10 : 40
+          }}
         >
           <XAxis
             dataKey="varietas"
             interval={0}
-            tick={<VarietasXAxisTick />}
-            height={50}
+            tick={isMobile ? false : <VarietasXAxisTick />}
+            height={isMobile ? 0 : 50}
+            axisLine={!isMobile}
           />
 
-          <YAxis
-             tick={{ fontSize: 12 }}
-          />
+          <YAxis tick={{ fontSize: 12 }} />
 
           <Tooltip
             formatter={value => [
@@ -108,6 +140,9 @@ export default function TotalPanenByVarietasGroupChart({
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+
+      {/* Mobile legend */}
+      {isMobile && <VerticalLegend data={data} />}
     </div>
   );
 }

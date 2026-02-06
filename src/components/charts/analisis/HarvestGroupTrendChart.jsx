@@ -101,9 +101,6 @@ export default function HarvestGroupTrendChart({ panen }) {
 
           <YAxis
             tick={{ fontSize: 12 }}
-            tickFormatter={v =>
-              v >= 1000 ? `${v / 1000}k` : v
-            }
           />
 
           <Tooltip
