@@ -86,7 +86,7 @@ export default function ProduktivitasGroupChart({
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <h3 className="mb-1 font-semibold">
-        Produktivitas (kg/ha)
+        Produktivitas Tahun {tahun} (kg/ha)
       </h3>
 
       <p className="text-xs text-gray-500 mb-3">

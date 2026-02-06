@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import HarvestByFarmingMethodChart from "@/components/charts/analisis/HarvestByFarmingMethodChart";
 import TotalPanenByVarietasGroupChart from "@/components/charts/analisis/TotalPanenByVarietasGroupChart";
-import HarvestVarietasTrendGroupChart from "@/components/charts/analisis/HarvestVarietasTrendGroupChart";
 import TotalPanenGroupCurrentYearChart from "@/components/charts/analisis/TotalPanenGroupCurrentYearChart";
 import ProduktivitasGroupChart from "@/components/charts/analisis/ProduktivitasGroupChart";
 import HarvestYoYComparisonChart from "@/components/charts/analisis/HarvestYoYComparisonChart";
+import HarvestGroupTrendChart from "../components/charts/analisis/HarvestGroupTrendChart";
 
 export default function Analysis() {
   /* =========================================================
@@ -177,7 +177,7 @@ export default function Analysis() {
           musim={musim}
         />
 
-        <HarvestVarietasTrendGroupChart
+        <HarvestGroupTrendChart
           panen={panen}
           kelompokTani={kelompokTani}
         />

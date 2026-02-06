@@ -62,7 +62,7 @@ export default function TotalPanenByVarietasGroupChart({
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <h3 className="mb-1 font-semibold">
-        Total Panen per Varietas
+        Total Panen per Varietas Tahun {tahun}
       </h3>
 
       <p className="text-xs text-gray-500 mb-3">

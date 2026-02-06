@@ -81,7 +81,7 @@ export default function HarvestByFarmingMethodChart({
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <h3 className="mb-1 font-semibold">
-        Efisiensi Metode Tanam (kg/ha)
+        Efisiensi Metode Tanam Tahun {tahun} (kg/ha)
       </h3>
 
       <p className="text-xs text-gray-500 mb-3">
