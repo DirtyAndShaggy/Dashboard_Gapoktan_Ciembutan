@@ -19,44 +19,20 @@ import {
 ---------------------------- */
 const MAX_YEARS = 5;
 
-/* ----------------------------
-   Custom vertical legend (mobile-ready)
----------------------------- */
-function VerticalLegend({ payload }) {
-  if (!payload || payload.length === 0) return null;
-
-  return (
-    <div className="flex flex-col gap-2 text-sm">
-      {payload.map(item => (
-        <div key={item.value} className="flex items-center gap-2">
-          <span
-            className="inline-block w-3 h-3 rounded-sm"
-            style={{ backgroundColor: item.color }}
-          />
-          <span className="text-gray-700">
-            {item.value.replace(/_/g, " ")}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export default function HarvestYoYComparisonChart({
   panen,
   kelompokTani,
-  tahun, // still useful as "current context"
-  musim
+  tahun // contextual only, NOT a filter
 }) {
   /* ----------------------------
-     Step 1: filter by group & season
+     Step 1: filter by farmer group ONLY
+     (INTENTIONALLY ignoring season)
   ---------------------------- */
-  const filtered = panen.filter(p =>
-    p.kelompokTani === kelompokTani &&
-    (musim === "ALL" || p.musim === musim)
+  const filtered = panen.filter(
+    p => p.kelompokTani === kelompokTani
   );
 
-  if (filtered.length === 0) {
+  if (!filtered.length) {
     return (
       <div className="text-sm text-gray-400 text-center py-10">
         Tidak ada data perbandingan panen
@@ -66,15 +42,18 @@ export default function HarvestYoYComparisonChart({
 
   /* ----------------------------
      Step 2: determine last N years
+     (data-driven, not calendar-driven)
   ---------------------------- */
   const years = Array.from(
-    new Set(filtered.map(p => p.tahun))
+    new Set(filtered.map(p => Number(p.tahun)))
   )
+    .filter(Boolean)
     .sort((a, b) => a - b)
     .slice(-MAX_YEARS);
 
   /* ----------------------------
      Step 3: aggregate per year & varietas
+     (ALL seasons combined)
   ---------------------------- */
   const map = {};
 
@@ -106,11 +85,11 @@ export default function HarvestYoYComparisonChart({
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm">
       <h3 className="mb-1 font-semibold">
-        Tren Panen {years.length}-Tahun Terakhir per Varietas
+        Tren Panen {years.length} Tahun Terakhir per Varietas
       </h3>
 
       <p className="text-xs text-gray-500 mb-3">
-        Total hasil panen kelompok tani (kg)
+        Total hasil panen kelompok tani (semua musim)
       </p>
 
       <ResponsiveContainer width="100%" height={320}>
@@ -133,7 +112,10 @@ export default function HarvestYoYComparisonChart({
           />
 
           <Tooltip
-            formatter={v => [`${v.toLocaleString()} kg`, "Panen"]}
+            formatter={(value, name) => [
+              `${value.toLocaleString()} kg`,
+              name.replace(/_/g, " ")
+            ]}
             labelFormatter={label => `Tahun: ${label}`}
           />
 
