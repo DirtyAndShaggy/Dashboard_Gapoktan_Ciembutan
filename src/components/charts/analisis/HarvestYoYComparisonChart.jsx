@@ -105,10 +105,7 @@ export default function HarvestYoYComparisonChart({
           />
 
           <YAxis
-            tick={{ fontSize: 12 }}
-            tickFormatter={v =>
-              v >= 1000 ? `${v / 1000}k` : v
-            }
+             tick={{ fontSize: 12 }}
           />
 
           <Tooltip

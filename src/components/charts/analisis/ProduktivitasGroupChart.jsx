@@ -13,6 +13,29 @@ import {
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
 
+/* ----------------------------
+   Custom Y-axis tick with varietas color
+---------------------------- */
+function VarietasYAxisTick({ x, y, payload }) {
+  const color =
+    VARIETAS_COLORS[payload.value] || DEFAULT_VARIETAS_COLOR;
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={-6}
+        y={0}
+        dy={4}
+        textAnchor="end"
+        fill={color}
+        fontSize={12}
+      >
+        {payload.value.replace(/_/g, " ")}
+      </text>
+    </g>
+  );
+}
+
 export default function ProduktivitasGroupChart({
   panen,
   kelompokTani,
@@ -49,7 +72,13 @@ export default function ProduktivitasGroupChart({
     })
   );
 
-  if (!data.length) return null;
+  if (!data.length) {
+    return (
+      <div className="text-sm text-gray-400 text-center py-10">
+        Tidak ada data produktivitas
+      </div>
+    );
+  }
 
   /* ----------------------------
      Render
@@ -64,33 +93,41 @@ export default function ProduktivitasGroupChart({
         Produktivitas = Hasil Panen ÷ Luas Lahan
       </p>
 
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={260}>
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ left: 40, right: 24 }}
+          margin={{ left: 60, right: 24 }}
         >
           <XAxis
             type="number"
             tick={{ fontSize: 12 }}
           />
+
           <YAxis
             type="category"
             dataKey="varietas"
-            width={110}
-            tick={{ fontSize: 12 }}
+            width={130}
+            tick={<VarietasYAxisTick />}
           />
+
           <Tooltip
-            formatter={v => [`${v} kg/ha`, "Produktivitas"]}
+            formatter={value => [
+              `${value.toLocaleString()} kg/ha`,
+              "Produktivitas"
+            ]}
+            labelFormatter={label =>
+              label.replace(/_/g, " ")
+            }
           />
 
           <Bar
             dataKey="kgPerHa"
             radius={[0, 6, 6, 0]}
           >
-            {data.map((entry, index) => (
+            {data.map(entry => (
               <Cell
-                key={`cell-${index}`}
+                key={entry.varietas}
                 fill={
                   VARIETAS_COLORS[entry.varietas] ||
                   DEFAULT_VARIETAS_COLOR

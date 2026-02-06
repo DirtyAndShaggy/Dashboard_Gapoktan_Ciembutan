@@ -127,8 +127,8 @@ export function getGroupHarvestByMethod(panen, kelompokTani, tahun, musim) {
       (musim === "ALL" || p.musim === musim)
     )
     .forEach(p => {
-      if (!map[p.metodeTanam]) map[p.metodeTanam] = 0;
-      map[p.metodeTanam] += p.hasilKg || 0;
+      if (!map[p.metode]) map[p.metode] = 0;
+      map[p.metode] += p.hasilKg || 0;
     });
 
   return Object.entries(map).map(([metodeTanam, totalKg]) => ({

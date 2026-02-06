@@ -72,9 +72,7 @@ export default function HarvestTrendChart({ data }) {
           <XAxis dataKey="tahun" />
 
           <YAxis
-            tickFormatter={value =>
-              value >= 1000 ? `${value / 1000}k` : value
-            }
+             tick={{ fontSize: 12 }}
           />
 
           <Tooltip
