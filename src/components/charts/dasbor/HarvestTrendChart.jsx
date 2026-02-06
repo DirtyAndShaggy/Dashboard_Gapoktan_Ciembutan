@@ -46,17 +46,25 @@ export default function HarvestTrendChart({ data }) {
     );
   }
 
-  // Dynamic varietas keys (exclude "year")
-  const varietasKeys = Object.keys(data[0]).filter(
-    key => key !== "tahun"
-  );
+   // Only keep last 5 most recent years
+   const sortedData = [...data].sort(
+      (a, b) => a.tahun - b.tahun
+   );
+
+   const recentData = sortedData.slice(-10);
+
+   // Dynamic varietas keys (exclude "tahun")
+    const varietasKeys = Object.keys(recentData[0]).filter(
+     key => key !== "tahun"
+   );
+
 
   return (
     <div className="w-full">
       {/* Chart */}
       <ResponsiveContainer width="100%" height={320}>
         <LineChart
-          data={data}
+          data={recentData}
           margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -70,7 +78,10 @@ export default function HarvestTrendChart({ data }) {
           />
 
           <Tooltip
-            formatter={value => [`${value.toLocaleString()} kg`, "Panen"]}
+            formatter={(value, name) => [
+              `${value.toLocaleString()} kg`,
+            name.replace(/_/g, " ")
+            ]}
             labelFormatter={label => `Tahun: ${label}`}
           />
 

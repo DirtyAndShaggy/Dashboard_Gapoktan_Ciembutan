@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import FinanceBanner from "@/components/banner/FinanceBanner";
-import TotalPanenByVarietasChart from "@/components/charts/TotalPanenByVarietasChart";
-import ProduktivitasByVarietasChart from "@/components/charts/ProduktivitasByVarietasChart";
-import HarvestTrendChart from "@/components/charts/HarvestTrendChart";
+import TotalPanenByVarietasChart from "@/components/charts/dasbor/TotalPanenByVarietasChart";
+import ProduktivitasByVarietasChart from "@/components/charts/dasbor/ProduktivitasByVarietasChart";
+import HarvestTrendChart from "@/components/charts/dasbor/HarvestTrendChart";
 
 import {
   getTotalPanenByVarietas,
@@ -68,14 +68,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Total Panen Desa per Varietas
+            Total Panen Desa per Varietas ({banner.tahun})
           </h3>
           <TotalPanenByVarietasChart data={totalPanenData} />
         </div>
 
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Rata-rata Produktivitas (kg/ha)
+             Rata-rata Produktivitas ({banner.tahun}) (kg/ha)
           </h3>
           <ProduktivitasByVarietasChart data={produktivitasData} />
         </div>
@@ -88,6 +88,8 @@ export default function Dashboard() {
         </h3>
         <HarvestTrendChart data={trendData} />
       </div>
+
+      {/* Bar Chart Current Year */}
     </div>
   );
 }

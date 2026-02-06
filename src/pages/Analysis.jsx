@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import HarvestByFarmingMethodChart from "@/components/charts/HarvestByFarmingMethodChart";
-import TotalPanenByVarietasGroupChart from "@/components/charts/TotalPanenByVarietasGroupChart";
-import HarvestVarietasTrendGroupChart from "@/components/charts/HarvestVarietasTrendGroupChart";
-import TotalPanenGroupCurrentYearChart from "@/components/charts/TotalPanenGroupCurrentYearChart";
-import ProduktivitasGroupChart from "@/components/charts/ProduktivitasGroupChart";
-import HarvestYoYComparisonChart from "@/components/charts/HarvestYoYComparisonChart";
+import HarvestByFarmingMethodChart from "@/components/charts/analisis/HarvestByFarmingMethodChart";
+import TotalPanenByVarietasGroupChart from "@/components/charts/analisis/TotalPanenByVarietasGroupChart";
+import HarvestVarietasTrendGroupChart from "@/components/charts/analisis/HarvestVarietasTrendGroupChart";
+import TotalPanenGroupCurrentYearChart from "@/components/charts/analisis/TotalPanenGroupCurrentYearChart";
+import ProduktivitasGroupChart from "@/components/charts/analisis/ProduktivitasGroupChart";
+import HarvestYoYComparisonChart from "@/components/charts/analisis/HarvestYoYComparisonChart";
 
 export default function Analysis() {
   /* =========================================================
-     State (HOOKS MUST BE AT TOP)
+     State
      ========================================================= */
   const [panen, setPanen] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ export default function Analysis() {
   const [musim, setMusim] = useState("ALL");
 
   /* =========================================================
-     Fetch data from Google Apps Script
+     Fetch data
      ========================================================= */
   useEffect(() => {
     fetch(
@@ -41,20 +41,40 @@ export default function Analysis() {
   }, []);
 
   /* =========================================================
-     Derived filter options (SAFE)
+     Derived filter options (10-year SAFE)
      ========================================================= */
   const farmerGroups = [...new Set(panen.map(p => p.kelompokTani))];
-  const years = [...new Set(panen.map(p => p.tahun))].sort((a, b) => b - a);
+
+  const currentYear = new Date().getFullYear();
+  const minYear = currentYear - 9;
+
+  const years = [...new Set(panen.map(p => Number(p.tahun)))]
+    .filter(y => y >= minYear && y <= currentYear)
+    .sort((a, b) => b - a);
 
   /* =========================================================
-     Initialize filters ONCE after data loads
+     Initialize filters once data is ready
      ========================================================= */
   useEffect(() => {
-    if (panen.length && !kelompokTani) {
+    if (!panen.length) return;
+
+    if (!kelompokTani && farmerGroups.length) {
       setKelompokTani(farmerGroups[0]);
+    }
+
+    if (!tahun && years.length) {
       setTahun(years[0]);
     }
-  }, [panen]);
+  }, [panen, farmerGroups, years]);
+
+  /* =========================================================
+     Guard invalid year (data changes / future proof)
+     ========================================================= */
+  useEffect(() => {
+    if (tahun && !years.includes(tahun)) {
+      setTahun(years[0] ?? null);
+    }
+  }, [years, tahun]);
 
   /* =========================================================
      Loading & error states
@@ -100,7 +120,7 @@ export default function Analysis() {
 
         <select
           className="border rounded px-3 py-2"
-          value={tahun}
+          value={tahun ?? ""}
           onChange={e => setTahun(Number(e.target.value))}
         >
           {years.map(y => (
@@ -137,27 +157,31 @@ export default function Analysis() {
           tahun={tahun}
           musim={musim}
         />
+
         <TotalPanenGroupCurrentYearChart
-        panen={panen}
-        kelompokTani={kelompokTani}
-        tahun={tahun}
-      />
+          panen={panen}
+          kelompokTani={kelompokTani}
+          tahun={tahun}
+        />
+
         <HarvestByFarmingMethodChart
-        panen={panen}
-        kelompokTani={kelompokTani}
-        tahun={tahun}
-        musim={musim}
-      />
+          panen={panen}
+          kelompokTani={kelompokTani}
+          tahun={tahun}
+          musim={musim}
+        />
+
         <TotalPanenByVarietasGroupChart
-        panen={panen}
-        kelompokTani={kelompokTani}
-        tahun={tahun}
-        musim={musim}
-      />
+          panen={panen}
+          kelompokTani={kelompokTani}
+          tahun={tahun}
+          musim={musim}
+        />
+
         <HarvestVarietasTrendGroupChart
-        panen={panen}
-        kelompokTani={kelompokTani}
-      />
+          panen={panen}
+          kelompokTani={kelompokTani}
+        />
       </div>
     </div>
   );
