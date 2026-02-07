@@ -111,15 +111,15 @@ export default function Analysis() {
 
       {/* ================= Current Group Highlight ================= */}
       <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
-        <p className="text-sm text-indigo-600 mb-1">
+        <p className="text-sm font-semibold text-gray-600 mb-1">
           Konteks Analisis
         </p>
 
-        <h2 className="text-lg font-semibold text-indigo-900">
+        <h2 className="text-lg font-semibold text-gray-900">
           {kelompokTani || "-"}
         </h2>
 
-        <div className="mt-2 flex flex-wrap gap-4 text-sm text-indigo-800">
+        <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-800">
           <div>
             <span className="font-medium">Tahun:</span>{" "}
             {tahun ?? "-"}
@@ -193,9 +193,9 @@ export default function Analysis() {
               onChange={e => setMusim(e.target.value)}
             >
               <option value="ALL">Semua Musim</option>
-              <option value="MT1">MT1 (Rendeng)</option>
-              <option value="MT2">MT2 (Gadu)</option>
-              <option value="MT3">MT3 (Kemarau)</option>
+              <option value="MT1">Musim Tanam 1 (Rendeng)</option>
+              <option value="MT2">Musim Tanam 2 (Gadu)</option>
+              <option value="MT3">Musim Tanam 3 (Kemarau)</option>
             </select>
           </div>
         </div>

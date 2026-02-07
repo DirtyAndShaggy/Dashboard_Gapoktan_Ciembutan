@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import FinanceBanner from "@/components/banner/FinanceBanner";
+
 import TotalPanenByVarietasChart from "@/components/charts/dasbor/TotalPanenByVarietasChart";
 import ProduktivitasByVarietasChart from "@/components/charts/dasbor/ProduktivitasByVarietasChart";
 import HarvestTrendChart from "@/components/charts/dasbor/HarvestTrendChart";
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /* ================= Fetch data ================= */
   useEffect(() => {
     fetch(
       "https://script.google.com/macros/s/AKfycbzE3jVybeiMFm23WAJcvPGu8Q23rdnzNwVkpFI3CTfACgGowF45slDyK5AFgTkiY8lI/exec"
@@ -33,9 +35,7 @@ export default function Dashboard() {
       });
   }, []);
 
-  /* ----------------------------
-     Loading & error states
-  ---------------------------- */
+  /* ================= States ================= */
   if (loading) {
     return <div className="p-6 text-gray-500">Loading dashboard data…</div>;
   }
@@ -48,12 +48,18 @@ export default function Dashboard() {
     );
   }
 
-  /* ----------------------------
-     Derived data (SAFE ZONE)
-  ---------------------------- */
+  if (!dashboardData) {
+    return (
+      <div className="p-6 text-gray-500">
+        No dashboard data available.
+      </div>
+    );
+  }
+
+  /* ================= Derived data ================= */
   const { panen, banner, keuangan } = dashboardData;
 
-  // 🔥 CURRENT YEAR = latest year available in database
+  // 🔥 Current year = latest year in dataset
   const years = panen
     .map(item => Number(item.tahun))
     .filter(Boolean);
@@ -70,37 +76,61 @@ export default function Dashboard() {
 
   const trendData = getTrendByVarietas(panen);
 
-  /* ----------------------------
-     Main render
-  ---------------------------- */
+  /* ================= Render ================= */
   return (
     <div className="p-6 space-y-6">
+      {/* ================= Banner ================= */}
       <FinanceBanner banner={banner} keuangan={keuangan} />
 
-      {/* Bar charts */}
+      {/* ================= Dashboard Context ================= */}
+      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+        <p className="text-sm text-indigo-600">
+          Ringkasan Panen Desa
+        </p>
+        <h2 className="text-lg font-semibold text-indigo-900">
+          Tahun {currentYear || "-"}
+        </h2>
+        <p className="text-xs text-indigo-700 mt-1">
+          Data seluruh kelompok tani
+        </p>
+      </div>
+
+      {/* ================= Main Charts ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Total harvest */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Total Panen Desa per Varietas{" "}
-            {currentYear ? `(${currentYear})` : ""}
+          <h3 className="font-semibold text-gray-800">
+            Total Panen per Varietas
           </h3>
+          <p className="text-xs text-gray-500 mb-3">
+            Akumulasi hasil panen seluruh desa (kg)
+          </p>
+
           <TotalPanenByVarietasChart data={totalPanenData} />
         </div>
 
+        {/* Productivity */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Rata-rata Produktivitas{" "}
-            {currentYear ? `(${currentYear})` : ""} (kg/ha)
+          <h3 className="font-semibold text-gray-800">
+            Rata-rata Produktivitas Varietas
           </h3>
+          <p className="text-xs text-gray-500 mb-3">
+            Hasil panen per hektar lahan (kg/ha)
+          </p>
+
           <ProduktivitasByVarietasChart data={produktivitasData} />
         </div>
       </div>
 
-      {/* Line chart */}
+      {/* ================= Trend Chart ================= */}
       <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm font-semibold text-gray-700 mb-2">
-          Tren Panen Tahunan per Varietas (kg)
+        <h3 className="font-semibold text-gray-800">
+          Tren Panen Tahunan per Varietas
         </h3>
+        <p className="text-xs text-gray-500 mb-3">
+          Perkembangan total hasil panen dari waktu ke waktu (kg)
+        </p>
+
         <HarvestTrendChart data={trendData} />
       </div>
     </div>
