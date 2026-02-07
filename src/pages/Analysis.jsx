@@ -19,6 +19,8 @@ export default function Analysis() {
   const [tahun, setTahun] = useState(null);
   const [musim, setMusim] = useState("ALL");
 
+  const [showFilters, setShowFilters] = useState(false);
+
   /* =========================================================
      Fetch data
   ========================================================= */
@@ -98,10 +100,10 @@ export default function Analysis() {
      Render
   ========================================================= */
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
       {/* ================= Header ================= */}
       <div>
-        <h1 className="text-xl font-bold text-gray-800">
+        <h1 className="text-lg sm:text-xl font-bold text-gray-800">
           Analisis Kelompok Tani
         </h1>
         <p className="text-sm text-gray-500">
@@ -109,8 +111,14 @@ export default function Analysis() {
         </p>
       </div>
 
-      {/* ================= Current Group Highlight ================= */}
-      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+      {/* ================= Mobile Context ================= */}
+      <div className="sm:hidden bg-indigo-50 rounded-lg px-3 py-2 text-sm text-gray-800">
+        <span className="font-medium">{kelompokTani}</span> · {tahun} ·{" "}
+        {musim === "ALL" ? "Semua Musim" : musim}
+      </div>
+
+      {/* ================= Desktop Context ================= */}
+      <div className="hidden sm:block bg-indigo-50 border border-indigo-100 rounded-xl p-4">
         <p className="text-sm font-semibold text-gray-600 mb-1">
           Konteks Analisis
         </p>
@@ -138,112 +146,129 @@ export default function Analysis() {
         </div>
       </div>
 
+      {/* ================= Mobile Filter Toggle ================= */}
+      <button
+        className="sm:hidden text-sm text-indigo-600"
+        onClick={() => setShowFilters(v => !v)}
+      >
+        {showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}
+      </button>
 
       {/* ================= Filters ================= */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          Filter Analisis
-        </h3>
+      {(showFilters || window.innerWidth >= 640) && (
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+            Filter Analisis
+          </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Kelompok Tani */}
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-500 mb-1">
-              Kelompok Tani
-            </label>
-            <select
-              className="border rounded px-3 py-2 text-sm"
-              value={kelompokTani}
-              onChange={e => setKelompokTani(e.target.value)}
-            >
-              {farmerGroups.map(k => (
-                <option key={k} value={k}>
-                 {k}
-                </option>
-             ))}
-            </select>
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Kelompok Tani */}
+            <div className="flex flex-col">
+              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+                Kelompok Tani
+              </label>
+              <select
+                className="border rounded px-3 py-2 text-sm"
+                value={kelompokTani}
+                onChange={e => setKelompokTani(e.target.value)}
+              >
+                {farmerGroups.map(k => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </select>
+            </div>
 
-          {/* Tahun */}
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-500 mb-1">
-              Tahun
-            </label>
-            <select
-              className="border rounded px-3 py-2 text-sm"
-              value={tahun ?? ""}
-              onChange={e => setTahun(Number(e.target.value))}
-            >
-              {years.map(y => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Tahun */}
+            <div className="flex flex-col">
+              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+                Tahun
+              </label>
+              <select
+                className="border rounded px-3 py-2 text-sm"
+                value={tahun ?? ""}
+                onChange={e => setTahun(Number(e.target.value))}
+              >
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
 
-          {/* Musim */}
-          <div className="flex flex-col">
-            <label className="text-xs text-gray-500 mb-1">
-              Musim Tanam
-            </label>
-            <select
-              className="border rounded px-3 py-2 text-sm"
-              value={musim}
-              onChange={e => setMusim(e.target.value)}
-            >
-              <option value="ALL">Semua Musim</option>
-              <option value="MT1">Musim Tanam 1 (Rendeng)</option>
-              <option value="MT2">Musim Tanam 2 (Gadu)</option>
-              <option value="MT3">Musim Tanam 3 (Kemarau)</option>
-            </select>
+            {/* Musim */}
+            <div className="flex flex-col">
+              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+                Musim Tanam
+              </label>
+              <select
+                className="border rounded px-3 py-2 text-sm"
+                value={musim}
+                onChange={e => setMusim(e.target.value)}
+              >
+                <option value="ALL">Semua Musim</option>
+                <option value="MT1">MT1 (Rendeng)</option>
+                <option value="MT2">MT2 (Gadu)</option>
+                <option value="MT3">MT3 (Kemarau)</option>
+              </select>
+            </div>
           </div>
         </div>
+      )}
+
+      {/* ================= Charts ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
+        <div className="min-h-[260px]">
+          <ProduktivitasGroupChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <HarvestYoYComparisonChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <TotalPanenGroupCurrentYearChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <HarvestByFarmingMethodChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <TotalPanenByVarietasGroupChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
       </div>
-      
-      {/* ================= Group Analysis ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ProduktivitasGroupChart
-          panen={panen}
-          kelompokTani={kelompokTani}
-          tahun={tahun}
-          musim={musim}
-        />
 
-        <HarvestYoYComparisonChart
-          panen={panen}
-          kelompokTani={kelompokTani}
-          tahun={tahun}
-        />
-
-        <TotalPanenGroupCurrentYearChart
-          panen={panen}
-          kelompokTani={kelompokTani}
-          tahun={tahun}
-        />
-
-        <HarvestByFarmingMethodChart
-          panen={panen}
-          kelompokTani={kelompokTani}
-          tahun={tahun}
-          musim={musim}
-        />
-
-        <TotalPanenByVarietasGroupChart
-          panen={panen}
-          kelompokTani={kelompokTani}
-          tahun={tahun}
-          musim={musim}
-        />
-      </div>
-
-      {/* ================= Comparison Section ================= */}
+      {/* ================= Comparison ================= */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold text-gray-800">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800">
           Perbandingan Antar Kelompok Tani
         </h2>
 
-        <HarvestGroupTrendChart panen={panen} />
+        <div className="min-h-[280px] sm:min-h-[360px]">
+          <HarvestGroupTrendChart panen={panen} />
+        </div>
       </div>
     </div>
   );
