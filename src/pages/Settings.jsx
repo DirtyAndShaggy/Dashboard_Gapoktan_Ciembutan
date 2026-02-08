@@ -1,6 +1,11 @@
 import { useSettings } from "@/context/SettingsContext";
 import { QRCodeSVG } from "qrcode.react";
 
+/* =========================
+   App Version
+========================= */
+const APP_VERSION = "1.0.0";
+
 export default function Settings() {
   const {
     settings,
@@ -149,6 +154,102 @@ export default function Settings() {
           Hanya menghapus preferensi lokal (tema & satuan).
         </p>
       </section>
+
+      {/* =========================
+          About / Credits
+      ========================= */}
+      <section className="
+        rounded-xl p-4 border
+        bg-gray-50 border-gray-200
+        dark:bg-gray-800 dark:border-gray-700
+      ">
+        <h2 className="text-lg font-semibold mb-3">
+          Tentang Aplikasi
+        </h2>
+
+        <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+
+          {/* Info */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Informasi Sistem
+            </h3>
+            <p className="mt-1">
+              Sistem Informasi Pertanian Desa
+            </p>
+            <p>
+              Versi: {APP_VERSION}
+            </p>
+          </div>
+
+          {/* Description */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Deskripsi
+            </h3>
+            <p className="mt-1">
+              Aplikasi ini dikembangkan sebagai bagian dari kegiatan pendidikan
+              dan pengabdian kepada masyarakat (KKN), serta untuk mendukung
+              sistem administrasi dan pengelolaan data pertanian desa.
+            </p>
+          </div>
+
+          {/* Developer */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Developer:
+            </h3>
+            <p className="mt-1">
+              Anggara Gustika
+            </p>
+            <p className="mt-1">
+              Andika Bangkit Pratama
+            </p>
+            <p>
+              © {new Date().getFullYear()}
+            </p>
+          </div>
+
+          {/* Data Sources */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Sumber Data & Integrasi
+            </h3>
+            <ul className="list-disc list-inside mt-1 space-y-1">
+              <li>Google Sheets (Data Pertanian)</li>
+              <li>Google Forms (Input Data)</li>
+              <li>Google Calendar (Agenda Desa)</li>
+            </ul>
+          </div>
+
+          {/* Tech */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Teknologi
+            </h3>
+            <ul className="list-disc list-inside mt-1 space-y-1">
+              <li>React + Vite</li>
+              <li>Tailwind CSS</li>
+              <li>Google APIs</li>
+              <li>Vercel Hosting</li>
+            </ul>
+          </div>
+
+          {/* Usage */}
+          <div>
+            <h3 className="font-medium text-gray-800 dark:text-gray-200">
+              Hak Penggunaan
+            </h3>
+            <p className="mt-1">
+              Aplikasi ini digunakan untuk keperluan administrasi desa
+              dan pengelolaan data pertanian. Tidak diperkenankan untuk
+              diperjualbelikan tanpa izin resmi.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   );
 }

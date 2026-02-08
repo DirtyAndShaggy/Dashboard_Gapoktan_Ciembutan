@@ -115,7 +115,7 @@ export default function Sidebar() {
             <h1 className="text-lg font-bold text-gold leading-tight font-brand">
               GAPOKTAN
             </h1>
-            <p className="text-xs text-white tracking-wide font-brandSub">
+            <p className="text-xs text-white tracking-wide text-left font-brandSub">
               CIEMBUTAN
             </p>
           </div>
