@@ -77,12 +77,16 @@ export default function Analysis() {
      States
   ========================================================= */
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading analysis data…</div>;
+    return (
+      <div className="p-6 text-gray-500 dark:text-gray-400">
+        Loading analysis data…
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="p-6 text-red-500">
+      <div className="p-6 text-red-500 dark:text-red-400">
         Failed to load analysis data: {error}
       </div>
     );
@@ -90,7 +94,7 @@ export default function Analysis() {
 
   if (!panen.length) {
     return (
-      <div className="p-6 text-gray-500">
+      <div className="p-6 text-gray-500 dark:text-gray-400">
         No harvest data available.
       </div>
     );
@@ -101,33 +105,42 @@ export default function Analysis() {
   ========================================================= */
   return (
     <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+
       {/* ================= Header ================= */}
       <div>
-        <h1 className="text-lg sm:text-xl font-bold text-gray-800">
+        <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
           Analisis Kelompok Tani
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Analisis hasil panen dan produktivitas per kelompok tani
         </p>
       </div>
 
       {/* ================= Mobile Context ================= */}
-      <div className="sm:hidden bg-indigo-50 rounded-lg px-3 py-2 text-sm text-gray-800">
+      <div className="
+        sm:hidden rounded-lg px-3 py-2 text-sm
+        bg-indigo-50 text-gray-800
+        dark:bg-indigo-900/30 dark:text-gray-200
+      ">
         <span className="font-medium">{kelompokTani}</span> · {tahun} ·{" "}
         {musim === "ALL" ? "Semua Musim" : musim}
       </div>
 
       {/* ================= Desktop Context ================= */}
-      <div className="hidden sm:block bg-indigo-50 border border-indigo-100 rounded-xl p-4">
-        <p className="text-sm font-semibold text-gray-600 mb-1">
+      <div className="
+        hidden sm:block rounded-xl p-4
+        bg-indigo-50 border border-indigo-100
+        dark:bg-indigo-900/30 dark:border-indigo-800
+      ">
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
           Konteks Analisis
         </p>
 
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {kelompokTani || "-"}
         </h2>
 
-        <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-800">
+        <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-800 dark:text-gray-200">
           <div>
             <span className="font-medium">Tahun:</span>{" "}
             {tahun ?? "-"}
@@ -148,7 +161,7 @@ export default function Analysis() {
 
       {/* ================= Mobile Filter Toggle ================= */}
       <button
-        className="sm:hidden text-sm text-indigo-600"
+        className="sm:hidden text-sm text-indigo-600 dark:text-indigo-400"
         onClick={() => setShowFilters(v => !v)}
       >
         {showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}
@@ -156,19 +169,27 @@ export default function Analysis() {
 
       {/* ================= Filters ================= */}
       {(showFilters || window.innerWidth >= 640) && (
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+        <div className="
+          rounded-xl p-4
+          bg-white border border-gray-200
+          dark:bg-gray-800 dark:border-gray-700
+        ">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
             Filter Analisis
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Kelompok Tani */}
             <div className="flex flex-col">
-              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Kelompok Tani
               </label>
               <select
-                className="border rounded px-3 py-2 text-sm"
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
                 value={kelompokTani}
                 onChange={e => setKelompokTani(e.target.value)}
               >
@@ -180,11 +201,15 @@ export default function Analysis() {
 
             {/* Tahun */}
             <div className="flex flex-col">
-              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Tahun
               </label>
               <select
-                className="border rounded px-3 py-2 text-sm"
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
                 value={tahun ?? ""}
                 onChange={e => setTahun(Number(e.target.value))}
               >
@@ -196,11 +221,15 @@ export default function Analysis() {
 
             {/* Musim */}
             <div className="flex flex-col">
-              <label className="text-[11px] sm:text-xs text-gray-500 mb-1">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                 Musim Tanam
               </label>
               <select
-                className="border rounded px-3 py-2 text-sm"
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
                 value={musim}
                 onChange={e => setMusim(e.target.value)}
               >
@@ -262,7 +291,7 @@ export default function Analysis() {
 
       {/* ================= Comparison ================= */}
       <div className="space-y-3">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100">
           Perbandingan Antar Kelompok Tani
         </h2>
 

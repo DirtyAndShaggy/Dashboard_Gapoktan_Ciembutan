@@ -59,12 +59,12 @@ export default function Harvest() {
      States
   ========================================================= */
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading harvest data…</div>;
+    return <div className="p-6 text-gray-500 dark:text-gray-400">Loading harvest data…</div>;
   }
 
   if (error) {
     return (
-      <div className="p-6 text-red-500">
+      <div className="p-6 text-red-600 dark:text-red-400">
         Failed to load harvest data: {error}
       </div>
     );
@@ -75,21 +75,30 @@ export default function Harvest() {
   ========================================================= */
   return (
     <div className="p-4 sm:p-6 space-y-6">
+
       {/* ================= Header ================= */}
       <div>
-        <h1 className="text-lg sm:text-xl font-bold text-gray-800">
+        <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
           Hasil Panen
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Laporan detail hasil panen petani
         </p>
       </div>
 
       {/* ================= Filters ================= */}
-      <div className="bg-white rounded-xl p-4 shadow-sm">
+      <div className="
+        rounded-xl p-4 border shadow-sm
+        bg-white border-gray-200
+        dark:bg-gray-800 dark:border-gray-700
+      ">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <select
-            className="border rounded px-3 py-2 text-sm"
+            className="
+              border rounded px-3 py-2 text-sm
+              bg-white text-gray-800 border-gray-300
+              dark:bg-gray-700 dark:text-white dark:border-gray-600
+            "
             value={kelompokTani}
             onChange={e => setKelompokTani(e.target.value)}
           >
@@ -100,7 +109,11 @@ export default function Harvest() {
           </select>
 
           <select
-            className="border rounded px-3 py-2 text-sm"
+            className="
+              border rounded px-3 py-2 text-sm
+              bg-white text-gray-800 border-gray-300
+              dark:bg-gray-700 dark:text-white dark:border-gray-600
+            "
             value={tahun}
             onChange={e => setTahun(e.target.value)}
           >
@@ -111,7 +124,11 @@ export default function Harvest() {
           </select>
 
           <select
-            className="border rounded px-3 py-2 text-sm"
+            className="
+              border rounded px-3 py-2 text-sm
+              bg-white text-gray-800 border-gray-300
+              dark:bg-gray-700 dark:text-white dark:border-gray-600
+            "
             value={musim}
             onChange={e => setMusim(e.target.value)}
           >
@@ -128,14 +145,18 @@ export default function Harvest() {
         {filteredPanen.map((p, i) => (
           <div
             key={i}
-            className="bg-white border rounded-xl p-4 shadow-sm"
+            className="
+              rounded-xl p-4 border shadow-sm
+              bg-white border-gray-200
+              dark:bg-gray-800 dark:border-gray-700
+            "
           >
             <div className="flex justify-between mb-3">
               <div>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {p.nama}
                 </h3>
-                <p className="text-xs text-bold-500">
+                <p className="text-xs text-gray-500 dark:text-gray-100">
                   {p.kelompokTani}
                 </p>
               </div>
@@ -147,28 +168,25 @@ export default function Harvest() {
               <Row label="Luas Lahan" value={`${p.luasHa} Ha`} />
               <Row label="Metode" value={formatValue(p.metode)} />
               <Row label="Varietas" value={formatValue(p.varietas)} />
-              <Row
-                label="Hasil Panen"
-                value={`${p.hasilKg} Kg`}
-                strong
-              />
-              <Row
-                label="Musim / Tahun"
-                value={`${p.musim} · ${p.tahun}`}
-              />
+              <Row label="Hasil Panen" value={`${p.hasilKg} Kg`} strong />
+              <Row label="Musim / Tahun" value={`${p.musim} · ${p.tahun}`} />
             </div>
           </div>
         ))}
       </div>
 
-{/* ================= Desktop Table ================= */}
-      <div className="hidden sm:block bg-white rounded-xl shadow-sm">
+      {/* ================= Desktop Table ================= */}
+      <div className="
+        hidden sm:block rounded-xl border shadow-sm
+        bg-white border-gray-200
+        dark:bg-gray-800 dark:border-gray-700
+      ">
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm border-collapse">
-            <thead className="bg-indigo-100 rounded">
+            <thead className="bg-indigo-100 dark:bg-indigo-900/40">
               <tr>
-                <th className="px-4 py-3 text-left font-bold">Nama </th>
-                <th className="px-4 py-3 text-left font-bold">Kelompok</th>
+                <th className="px-4 py-3 text-left font-semibold">Nama</th>
+                <th className="px-4 py-3 text-left font-semibold">Kelompok</th>
                 <th className="px-4 py-3 text-left font-semibold">No HP</th>
                 <th className="px-4 py-3 text-center font-semibold">Luas (Ha)</th>
                 <th className="px-4 py-3 text-left font-semibold">Metode</th>
@@ -182,40 +200,26 @@ export default function Harvest() {
               {filteredPanen.map((p, i) => (
                 <tr
                   key={i}
-                  className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50"
+                  className="
+                    border-b last:border-b-0
+                    border-gray-200 hover:bg-gray-50
+                    dark:border-gray-700 dark:hover:bg-gray-700/40
+                  "
                 >
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.nama}
-                  </td>
-                  <td className="px-4 py-5 text-gray-700 font-semibold">
-                    {p.kelompokTani}
-                  </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.noHp}
-                  </td>
-                  <td className="px-4 py-5 text-center text-gray-600">
-                    {p.luasHa}
-                 </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.metode}
-                  </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {formatValue(p.varietas)}
-                  </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.hasilKg}
-                  </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.musim}
-                  </td>
-                  <td className="px-4 py-5 text-gray-600">
-                    {p.tahun}
-                  </td>
+                  <td className="px-4 py-4 text-gray-700 dark:text-gray-200">{p.nama}</td>
+                  <td className="px-4 py-4 font-semibold text-gray-800 dark:text-gray-100">{p.kelompokTani}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.noHp}</td>
+                  <td className="px-4 py-4 text-center text-gray-600 dark:text-gray-300">{p.luasHa}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.metode}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{formatValue(p.varietas)}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.hasilKg}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.musim}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.tahun}</td>
                 </tr>
               ))}
             </tbody>
-         </table>
-       </div>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -226,20 +230,14 @@ export default function Harvest() {
 ========================================================= */
 function formatValue(value) {
   if (!value) return "-";
-
-  return String(value)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, c => c.toUpperCase());
+  return String(value).replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
-/* =========================================================
-   Helper row for mobile card
-========================================================= */
 function Row({ label, value, strong }) {
   return (
     <div className="flex justify-between">
-      <span className="text-gray-500">{label}</span>
-      <span className={strong ? "font-medium text-gray-900" : "text-gray-800"}>
+      <span className="text-gray-500 dark:text-gray-400">{label}</span>
+      <span className={strong ? "font-medium text-gray-900 dark:text-white" : "text-gray-800 dark:text-gray-200"}>
         {value}
       </span>
     </div>
