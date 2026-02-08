@@ -1,5 +1,5 @@
 🌾 Dasbor CIEMBUTAN – GAPOKTAN
-Dasbor CIEMBUTAN adalah aplikasi dashboard berbasis web untuk GAPOKTAN CIEMBUTAN yang digunakan untuk menampilkan dan menganalisis data pertanian seperti hasil panen, produktivitas lahan, musim tanam, dan perbandingan kelompok tani.
+Dasbor ini adalah aplikasi dashboard berbasis web untuk GAPOKTAN CIEMBUTAN yang digunakan untuk menampilkan dan menganalisis data pertanian seperti hasil panen, produktivitas lahan, musim tanam, dan perbandingan kelompok tani.
 Aplikasi ini dirancang agar mudah digunakan, responsif di perangkat mobile, serta mudah dikembangkan oleh tim KKN selanjutnya.
 
 ✨ Fitur Utama
@@ -9,35 +9,18 @@ Aplikasi ini dirancang agar mudah digunakan, responsif di perangkat mobile, sert
 🌗 Siap untuk mode gelap/terang
 🔄 Dukungan perubahan satuan (kg, ton, dll)
 🧩 Struktur kode modular dan scalable
+📋 Integrasi Google Form & Google Sheets
+🔗 QR Code untuk akses input data
 
 🛠 Stack yang Digunakan
-React (menggunakan Vite)
-Tailwind CSS v3
-Recharts (untuk visualisasi data)
-Asset lokal (logo, ikon, dan font disimpan di repository)
+⚛️ React (Vite)
+🎨 Tailwind CSS v3
+📈 Recharts (visualisasi data)
+📦 Asset lokal (logo, ikon, font)
+🔳 qrcode.react (QR code generator)
 
 Rencana alur data:
 Google Form → Google Sheets → Google Apps Script → Dashboard
-
-📁 Struktur Folder (Ringkas)
-src/
-├─ assets/
-│  ├─ icons/
-│  ├─ logo/
-│  └─ fonts/
-├─ components/
-│  ├─ Sidebar.jsx
-│  └─ ...
-├─ pages/
-│  ├─ Dashboard.jsx
-│  ├─ Analisis.jsx
-│  ├─ HasilPanen.jsx
-│  ├─ Kalender.jsx
-│  └─ Pengaturan.jsx
-├─ layouts/
-│  └─ MainLayout.jsx
-├─ App.jsx
-└─ main.jsx
 
 ✅ Prasyarat
 Pastikan perangkat sudah terinstal:
