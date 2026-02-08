@@ -15,28 +15,48 @@ export default function FinanceBanner({ banner, keuangan }) {
   );
 
   return (
-    <section className="bg-white rounded-2xl shadow-sm p-5 mb-6">
+    <section
+      className="
+        rounded-2xl shadow-sm p-5 mb-6
+        bg-white dark:bg-gray-900
+        border border-transparent dark:border-gray-800
+      "
+    >
       {/* Header */}
       <div className="mb-5">
-        <h2 className="text-lg font-bold text-gray-800">
+        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">
           Ringkasan Pendapatan & Belanja Desa Anggaran {banner.tahun}
         </h2>
-        <p className="text-sm text-gray-500">{banner.subtitle}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {banner.subtitle}
+        </p>
       </div>
 
       {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Pendapatan */}
-        <div className="rounded-xl border border-gray-100 p-4">
-          <p className="text-sm font-semibold text-gray-700 mb-3">
+        <div
+          className="
+            rounded-xl p-4
+            border border-gray-100 dark:border-gray-800
+            bg-gray-50 dark:bg-gray-800
+          "
+        >
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
             Pendapatan
           </p>
           <IncomeCard income={keuangan.income} />
         </div>
 
         {/* Belanja */}
-        <div className="rounded-xl border border-gray-100 p-4">
-          <p className="text-sm font-semibold text-gray-700 mb-3">
+        <div
+          className="
+            rounded-xl p-4
+            border border-gray-100 dark:border-gray-800
+            bg-gray-50 dark:bg-gray-800
+          "
+        >
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
             Belanja
           </p>
 
