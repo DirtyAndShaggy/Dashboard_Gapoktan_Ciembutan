@@ -135,7 +135,7 @@ export default function Harvest() {
                 <h3 className="font-semibold text-gray-900">
                   {p.nama}
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-bold-500">
                   {p.kelompokTani}
                 </p>
               </div>
@@ -161,40 +161,61 @@ export default function Harvest() {
         ))}
       </div>
 
-      {/* ================= Desktop Table ================= */}
-      <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-sm">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left">Nama</th>
-              <th className="px-4 py-3 text-left">Kelompok</th>
-              <th className="px-4 py-3 text-left">No HP</th>
-              <th className="px-4 py-3 text-left">Luas (Ha)</th>
-              <th className="px-4 py-3 text-left">Metode</th>
-              <th className="px-4 py-3 text-left">Varietas</th>
-              <th className="px-4 py-3 text-right">Hasil (Ton)</th>
-              <th className="px-4 py-3 text-left">Musim</th>
-              <th className="px-4 py-3 text-left">Tahun</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredPanen.map((p, i) => (
-              <tr key={i} className="border-t">
-                <td className="px-4 py-2">{p.nama}</td>
-                <td className="px-4 py-2">{p.kelompokTani}</td>
-                <td className="px-4 py-2">{p.noHp}</td>
-                <td className="px-4 py-2">{p.luasHa}</td>
-                <td className="px-4 py-2">{p.metode}</td>
-                <td className="px-4 py-2">{p.varietas}</td>
-                <td className="px-4 py-2 text-right font-medium">
-                  {p.hasilKg}
-                </td>
-                <td className="px-4 py-2">{p.musim}</td>
-                <td className="px-4 py-2">{p.tahun}</td>
+{/* ================= Desktop Table ================= */}
+      <div className="hidden sm:block bg-white rounded-xl shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm border-collapse">
+            <thead className="bg-indigo-100 rounded">
+              <tr>
+                <th className="px-4 py-3 text-left font-bold">Nama </th>
+                <th className="px-4 py-3 text-left font-bold">Kelompok</th>
+                <th className="px-4 py-3 text-left font-semibold">No HP</th>
+                <th className="px-4 py-3 text-center font-semibold">Luas (Ha)</th>
+                <th className="px-4 py-3 text-left font-semibold">Metode</th>
+                <th className="px-4 py-3 text-left font-semibold">Varietas</th>
+                <th className="px-4 py-3 text-left font-semibold">Hasil (Kg)</th>
+                <th className="px-4 py-3 text-left font-semibold">Musim</th>
+                <th className="px-4 py-3 text-left font-semibold">Tahun</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredPanen.map((p, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50"
+                >
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.nama}
+                  </td>
+                  <td className="px-4 py-5 text-gray-700 font-semibold">
+                    {p.kelompokTani}
+                  </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.noHp}
+                  </td>
+                  <td className="px-4 py-5 text-center text-gray-600">
+                    {p.luasHa}
+                 </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.metode}
+                  </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {formatValue(p.varietas)}
+                  </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.hasilKg}
+                  </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.musim}
+                  </td>
+                  <td className="px-4 py-5 text-gray-600">
+                    {p.tahun}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+         </table>
+       </div>
       </div>
     </div>
   );

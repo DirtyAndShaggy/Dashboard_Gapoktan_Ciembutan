@@ -83,14 +83,14 @@ export default function Dashboard() {
       <FinanceBanner banner={banner} keuangan={keuangan} />
 
       {/* ================= Dashboard Context ================= */}
-      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
-        <p className="text-sm text-indigo-600">
+      <div className="bg-indigo-50 border border-gray-100 rounded-xl p-4">
+        <p className="text-sm text-gray-600">
           Ringkasan Panen Desa
         </p>
-        <h2 className="text-lg font-semibold text-indigo-900">
+        <h2 className="text-lg font-semibold text-gray-900">
           Tahun {currentYear || "-"}
         </h2>
-        <p className="text-xs text-indigo-700 mt-1">
+        <p className="text-xs text-gray-700 mt-1">
           Data seluruh kelompok tani
         </p>
       </div>
