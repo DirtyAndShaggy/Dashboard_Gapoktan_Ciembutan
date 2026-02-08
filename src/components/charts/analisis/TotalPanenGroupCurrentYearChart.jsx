@@ -49,7 +49,7 @@ function MusimVerticalLegend({ data }) {
                 DEFAULT_MUSIM_COLOR
             }}
           />
-          <span className="text-gray-700">
+          <span className="text-gray-700 dark:text-gray-300">
             {MUSIM_LABELS[item.musim] || item.musim}
           </span>
         </div>
@@ -90,19 +90,29 @@ export default function TotalPanenGroupCurrentYearChart({
 
   if (!data.length) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10 rounded-lg
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data panen per musim
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
-      <h3 className="mb-1 font-semibold">
+    <div
+      className="
+        rounded-xl p-4 shadow-sm
+        bg-white
+        dark:bg-gray-800
+      "
+    >
+      <h3 className="mb-1 font-semibold text-gray-800 dark:text-gray-100">
         Total Panen Tahun {tahun} per Musim
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
         Total hasil panen kelompok tani (kg)
       </p>
 
@@ -122,11 +132,22 @@ export default function TotalPanenGroupCurrentYearChart({
             tickFormatter={v => MUSIM_LABELS[v] || v}
             height={isMobile ? 0 : 40}
             axisLine={!isMobile}
+            tickLine={!isMobile}
+            stroke="var(--chart-axis)"
           />
 
-          <YAxis tick={{ fontSize: 12 }} />
+          <YAxis
+            tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
+          />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              border: "1px solid var(--tooltip-border)",
+              color: "var(--tooltip-text)",
+              borderRadius: "8px"
+            }}
             formatter={value => [
               `${value.toLocaleString()} kg`,
               "Total Panen"

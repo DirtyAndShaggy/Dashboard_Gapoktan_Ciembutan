@@ -30,7 +30,11 @@ function stringToColor(str) {
 export default function HarvestGroupTrendChart({ panen }) {
   if (!panen || !panen.length) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data panen
       </div>
     );
@@ -78,12 +82,26 @@ export default function HarvestGroupTrendChart({ panen }) {
      Render
   ---------------------------- */
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
-      <h3 className="mb-1 font-semibold">
+    <div
+      className="
+        rounded-xl p-4 shadow-sm
+        bg-white
+        dark:bg-gray-800
+      "
+    >
+      <h3 className="
+        mb-1 font-semibold
+        text-gray-900
+        dark:text-gray-100
+      ">
         Tren Total Panen Kelompok Tani
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="
+        text-xs mb-3
+        text-gray-500
+        dark:text-gray-400
+      ">
         Perbandingan hasil panen antar kelompok tani (kg)
       </p>
 
@@ -92,18 +110,29 @@ export default function HarvestGroupTrendChart({ panen }) {
           data={chartData}
           margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="var(--chart-grid)"
+          />
 
           <XAxis
             dataKey="tahun"
             tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <YAxis
             tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              border: "1px solid var(--tooltip-border)",
+              color: "var(--tooltip-text)",
+              borderRadius: "8px"
+            }}
             formatter={(value, name) => [
               `${value.toLocaleString()} kg`,
               name
@@ -111,7 +140,12 @@ export default function HarvestGroupTrendChart({ panen }) {
             labelFormatter={label => `Tahun: ${label}`}
           />
 
-          <Legend wrapperStyle={{ paddingTop: 12 }} />
+          <Legend
+            wrapperStyle={{
+              paddingTop: 12,
+              color: "var(--tooltip-text)"
+            }}
+          />
 
           {kelompokList.map(kelompok => (
             <Line

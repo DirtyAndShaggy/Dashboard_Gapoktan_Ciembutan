@@ -34,7 +34,11 @@ export default function HarvestYoYComparisonChart({
 
   if (!filtered.length) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10 rounded-lg
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data perbandingan panen
       </div>
     );
@@ -83,12 +87,16 @@ export default function HarvestYoYComparisonChart({
   );
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
+    <div className="
+      rounded-xl p-4 shadow-sm
+      bg-white text-gray-900
+      dark:bg-gray-800 dark:text-gray-100
+    ">
       <h3 className="mb-1 font-semibold">
         Tren Panen {years.length} Tahun Terakhir per Varietas
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
         Total hasil panen kelompok tani (semua musim)
       </p>
 
@@ -97,18 +105,29 @@ export default function HarvestYoYComparisonChart({
           data={chartData}
           margin={{ top: 10, right: 20, left: 10, bottom: 30 }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid
+            stroke="var(--chart-grid)"
+            strokeDasharray="3 3"
+          />
 
           <XAxis
             dataKey="tahun"
             tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <YAxis
-             tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              border: "1px solid var(--tooltip-border)",
+              color: "var(--tooltip-text)",
+              borderRadius: "8px"
+            }}
             formatter={(value, name) => [
               `${value.toLocaleString()} kg`,
               name.replace(/_/g, " ")

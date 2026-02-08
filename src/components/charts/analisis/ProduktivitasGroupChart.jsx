@@ -74,7 +74,11 @@ export default function ProduktivitasGroupChart({
 
   if (!data.length) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10 rounded-lg
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data produktivitas
       </div>
     );
@@ -84,12 +88,24 @@ export default function ProduktivitasGroupChart({
      Render
   ---------------------------- */
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
-      <h3 className="mb-1 font-semibold">
+    <div className="
+      rounded-xl p-4 shadow-sm
+      bg-white
+      dark:bg-gray-800
+    ">
+      <h3 className="
+        mb-1 font-semibold
+        text-gray-800
+        dark:text-gray-100
+      ">
         Produktivitas Tahun {tahun} (kg/ha)
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="
+        text-xs mb-3
+        text-gray-500
+        dark:text-gray-400
+      ">
         Produktivitas = Hasil Panen ÷ Luas Lahan
       </p>
 
@@ -102,6 +118,7 @@ export default function ProduktivitasGroupChart({
           <XAxis
             type="number"
             tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <YAxis
@@ -112,6 +129,12 @@ export default function ProduktivitasGroupChart({
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              border: "1px solid var(--tooltip-border)",
+              color: "var(--tooltip-text)",
+              borderRadius: "8px"
+            }}
             formatter={value => [
               `${value.toLocaleString()} kg/ha`,
               "Produktivitas"

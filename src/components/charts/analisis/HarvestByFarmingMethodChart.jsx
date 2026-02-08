@@ -42,7 +42,7 @@ export default function HarvestByFarmingMethodChart({
       (musim === "ALL" || p.musim === musim)
     )
     .forEach(p => {
-      const metode = p.metode; // ✅ FIX IS HERE
+      const metode = p.metode;
 
       if (!metode) return;
 
@@ -69,7 +69,11 @@ export default function HarvestByFarmingMethodChart({
 
   if (!data.length) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data produktivitas metode tanam
       </div>
     );
@@ -79,12 +83,18 @@ export default function HarvestByFarmingMethodChart({
      Render
   ---------------------------- */
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm">
+    <div
+      className="
+        rounded-xl p-4 shadow-sm
+        bg-white text-gray-900
+        dark:bg-gray-800 dark:text-gray-100
+      "
+    >
       <h3 className="mb-1 font-semibold">
         Efisiensi Metode Tanam Tahun {tahun} (kg/ha)
       </h3>
 
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
         Perbandingan hasil panen per luas lahan
       </p>
 
@@ -97,6 +107,7 @@ export default function HarvestByFarmingMethodChart({
           <XAxis
             type="number"
             tick={{ fontSize: 12 }}
+            stroke="var(--chart-axis)"
           />
 
           <YAxis
@@ -104,9 +115,16 @@ export default function HarvestByFarmingMethodChart({
             dataKey="metode"
             tickFormatter={formatMethod}
             width={120}
+            stroke="var(--chart-axis)"
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              border: "1px solid var(--tooltip-border)",
+              color: "var(--tooltip-text)",
+              borderRadius: "8px"
+            }}
             formatter={value => [
               `${value.toLocaleString()} kg/ha`,
               "Produktivitas"
