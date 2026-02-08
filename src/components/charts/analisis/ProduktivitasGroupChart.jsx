@@ -8,10 +8,29 @@ import {
   Cell
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0;
+  }
+}
 
 /* ----------------------------
    Custom Y-axis tick with varietas color
@@ -42,6 +61,8 @@ export default function ProduktivitasGroupChart({
   tahun,
   musim
 }) {
+  const { settings } = useSettings();
+
   /* ----------------------------
      Aggregate produktivitas per varietas
   ---------------------------- */
@@ -65,9 +86,9 @@ export default function ProduktivitasGroupChart({
   const data = Object.entries(map).map(
     ([varietas, v]) => ({
       varietas,
-      kgPerHa:
+      value:
         v.totalHa > 0
-          ? Math.round(v.totalKg / v.totalHa)
+          ? v.totalKg / v.totalHa
           : 0
     })
   );
@@ -98,7 +119,8 @@ export default function ProduktivitasGroupChart({
         text-gray-800
         dark:text-gray-100
       ">
-        Produktivitas Tahun {tahun} (kg/ha)
+        Produktivitas Tahun {tahun} (
+        {formatWeightLabel(settings.weightUnit)}/ha)
       </h3>
 
       <p className="
@@ -119,6 +141,16 @@ export default function ProduktivitasGroupChart({
             type="number"
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={value =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                )
+              })
+            }
           />
 
           <YAxis
@@ -136,7 +168,16 @@ export default function ProduktivitasGroupChart({
               borderRadius: "8px"
             }}
             formatter={value => [
-              `${value.toLocaleString()} kg/ha`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                )
+              })} ${formatWeightLabel(
+                settings.weightUnit
+              )}/ha`,
               "Produktivitas"
             ]}
             labelFormatter={label =>
@@ -145,7 +186,7 @@ export default function ProduktivitasGroupChart({
           />
 
           <Bar
-            dataKey="kgPerHa"
+            dataKey="value"
             radius={[0, 6, 6, 0]}
           >
             {data.map(entry => (

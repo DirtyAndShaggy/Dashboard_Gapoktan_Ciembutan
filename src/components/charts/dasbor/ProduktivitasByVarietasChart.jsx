@@ -9,12 +9,31 @@ import {
   Cell
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
 
 import { useIsMobile } from "@/utils/useIsMobile";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Custom vertical legend (mobile)
@@ -69,6 +88,7 @@ function MultilineXAxisTick({ x, y, payload }) {
 
 export default function ProduktivitasByVarietasChart({ data }) {
   const isMobile = useIsMobile();
+  const { settings } = useSettings();
 
   if (!data || data.length === 0) {
     return (
@@ -99,7 +119,6 @@ export default function ProduktivitasByVarietasChart({ data }) {
             stroke="var(--chart-grid)"
           />
 
-          {/* Desktop-only X-axis labels */}
           <XAxis
             dataKey="varietas"
             interval={0}
@@ -113,6 +132,16 @@ export default function ProduktivitasByVarietasChart({ data }) {
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -123,7 +152,14 @@ export default function ProduktivitasByVarietasChart({ data }) {
               borderRadius: "8px"
             }}
             formatter={value => [
-              `${Math.round(value).toLocaleString()} kg/ha`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}/ha`,
               "Produktivitas"
             ]}
             labelFormatter={label =>
@@ -145,7 +181,6 @@ export default function ProduktivitasByVarietasChart({ data }) {
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Mobile legend ONLY */}
       {isMobile && (
         <div className="mt-3">
           <VerticalLegend

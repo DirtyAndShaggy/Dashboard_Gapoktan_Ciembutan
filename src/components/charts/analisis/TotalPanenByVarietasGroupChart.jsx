@@ -8,6 +8,12 @@ import {
   Cell
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
@@ -15,6 +21,19 @@ import {
 
 import { getGroupHarvestByVarietas } from "@/utils/panenStats";
 import { useIsMobile } from "@/utils/useIsMobile";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Custom colored X-axis tick (desktop)
@@ -71,6 +90,7 @@ export default function TotalPanenByVarietasGroupChart({
   musim
 }) {
   const isMobile = useIsMobile();
+  const { settings } = useSettings();
 
   const data = getGroupHarvestByVarietas(
     panen,
@@ -104,7 +124,7 @@ export default function TotalPanenByVarietasGroupChart({
       </h3>
 
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-        Total hasil panen kelompok tani (kg)
+        Total hasil panen kelompok tani ({formatWeightLabel(settings.weightUnit)})
       </p>
 
       <ResponsiveContainer width="100%" height={300}>
@@ -129,6 +149,16 @@ export default function TotalPanenByVarietasGroupChart({
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -139,7 +169,14 @@ export default function TotalPanenByVarietasGroupChart({
               borderRadius: "8px"
             }}
             formatter={value => [
-              `${value.toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               "Total Panen"
             ]}
             labelFormatter={label =>
@@ -161,7 +198,6 @@ export default function TotalPanenByVarietasGroupChart({
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Mobile legend */}
       {isMobile && <VerticalLegend data={data} />}
     </div>
   );

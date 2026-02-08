@@ -8,6 +8,12 @@ import {
   Cell
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 /* ----------------------------
    Farming method colors
 ---------------------------- */
@@ -19,10 +25,20 @@ const METHOD_COLORS = {
 const DEFAULT_METHOD_COLOR = "#6366f1";
 
 /* ----------------------------
-   Friendly label
+   Helpers
 ---------------------------- */
 const formatMethod = v =>
   v ? v.replace(/_/g, " ") : "Unknown";
+
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 export default function HarvestByFarmingMethodChart({
   panen,
@@ -30,6 +46,8 @@ export default function HarvestByFarmingMethodChart({
   tahun,
   musim
 }) {
+  const { settings } = useSettings();
+
   /* ----------------------------
      Aggregate productivity per method
   ---------------------------- */
@@ -43,7 +61,6 @@ export default function HarvestByFarmingMethodChart({
     )
     .forEach(p => {
       const metode = p.metode;
-
       if (!metode) return;
 
       if (!map[metode]) {
@@ -62,7 +79,7 @@ export default function HarvestByFarmingMethodChart({
       metode,
       kgPerHa:
         v.totalHa > 0
-          ? Math.round(v.totalKg / v.totalHa)
+          ? v.totalKg / v.totalHa
           : 0
     }))
     .sort((a, b) => b.kgPerHa - a.kgPerHa);
@@ -91,7 +108,8 @@ export default function HarvestByFarmingMethodChart({
       "
     >
       <h3 className="mb-1 font-semibold">
-        Efisiensi Metode Tanam Tahun {tahun} (kg/ha)
+        Efisiensi Metode Tanam Tahun {tahun} (
+        {formatWeightLabel(settings.weightUnit)}/ha)
       </h3>
 
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -108,6 +126,16 @@ export default function HarvestByFarmingMethodChart({
             type="number"
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <YAxis
@@ -126,7 +154,14 @@ export default function HarvestByFarmingMethodChart({
               borderRadius: "8px"
             }}
             formatter={value => [
-              `${value.toLocaleString()} kg/ha`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}/ha`,
               "Produktivitas"
             ]}
             labelFormatter={label =>

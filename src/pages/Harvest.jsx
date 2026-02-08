@@ -1,4 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+  formatLandArea,
+  formatLandAreaLabel,
+  formatNumber,
+} from "@/utils/unitFormatter";
 
 export default function Harvest() {
   /* =========================================================
@@ -11,6 +19,8 @@ export default function Harvest() {
   const [tahun, setTahun] = useState("ALL");
   const [musim, setMusim] = useState("ALL");
   const [kelompokTani, setKelompokTani] = useState("ALL");
+
+  const { settings } = useSettings();
 
   /* =========================================================
      Fetch data
@@ -59,7 +69,11 @@ export default function Harvest() {
      States
   ========================================================= */
   if (loading) {
-    return <div className="p-6 text-gray-500 dark:text-gray-400">Loading harvest data…</div>;
+    return (
+      <div className="p-6 text-gray-500 dark:text-gray-400">
+        Loading harvest data…
+      </div>
+    );
   }
 
   if (error) {
@@ -165,10 +179,21 @@ export default function Harvest() {
 
             <div className="space-y-1 text-sm">
               <Row label="No HP" value={p.noHp} />
-              <Row label="Luas Lahan" value={`${p.luasHa} Ha`} />
+              <Row
+                label="Luas Lahan"
+                value={`${formatNumber(
+                  formatLandArea(p.luasHa, settings.landUnit)
+                )} ${formatLandAreaLabel(settings.landUnit)}`}
+              />
               <Row label="Metode" value={formatValue(p.metode)} />
               <Row label="Varietas" value={formatValue(p.varietas)} />
-              <Row label="Hasil Panen" value={`${p.hasilKg} Kg`} strong />
+              <Row
+                label="Hasil Panen"
+                value={`${formatNumber(
+                  formatWeight(p.hasilKg, settings.weightUnit)
+                )} ${formatWeightLabel(settings.weightUnit)}`}
+                strong
+              />
               <Row label="Musim / Tahun" value={`${p.musim} · ${p.tahun}`} />
             </div>
           </div>
@@ -188,10 +213,14 @@ export default function Harvest() {
                 <th className="px-4 py-3 text-left font-semibold">Nama</th>
                 <th className="px-4 py-3 text-left font-semibold">Kelompok</th>
                 <th className="px-4 py-3 text-left font-semibold">No HP</th>
-                <th className="px-4 py-3 text-center font-semibold">Luas (Ha)</th>
+                <th className="px-4 py-3 text-center font-semibold">
+                  Luas ({formatLandAreaLabel(settings.landUnit)})
+                </th>
                 <th className="px-4 py-3 text-left font-semibold">Metode</th>
                 <th className="px-4 py-3 text-left font-semibold">Varietas</th>
-                <th className="px-4 py-3 text-left font-semibold">Hasil (Kg)</th>
+                <th className="px-4 py-3 text-left font-semibold">
+                  Hasil ({formatWeightLabel(settings.weightUnit)})
+                </th>
                 <th className="px-4 py-3 text-left font-semibold">Musim</th>
                 <th className="px-4 py-3 text-left font-semibold">Tahun</th>
               </tr>
@@ -209,10 +238,18 @@ export default function Harvest() {
                   <td className="px-4 py-4 text-gray-700 dark:text-gray-200">{p.nama}</td>
                   <td className="px-4 py-4 font-semibold text-gray-800 dark:text-gray-100">{p.kelompokTani}</td>
                   <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.noHp}</td>
-                  <td className="px-4 py-4 text-center text-gray-600 dark:text-gray-300">{p.luasHa}</td>
+                  <td className="px-4 py-4 text-center text-gray-600 dark:text-gray-300">
+                    {formatNumber(
+                      formatLandArea(p.luasHa, settings.landUnit)
+                    )}
+                  </td>
                   <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.metode}</td>
                   <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{formatValue(p.varietas)}</td>
-                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.hasilKg}</td>
+                  <td className="px-4 py-4 text-gray-600 dark:text-gray-300">
+                    {formatNumber(
+                      formatWeight(p.hasilKg, settings.weightUnit)
+                    )}
+                  </td>
                   <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.musim}</td>
                   <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{p.tahun}</td>
                 </tr>
@@ -237,7 +274,13 @@ function Row({ label, value, strong }) {
   return (
     <div className="flex justify-between">
       <span className="text-gray-500 dark:text-gray-400">{label}</span>
-      <span className={strong ? "font-medium text-gray-900 dark:text-white" : "text-gray-800 dark:text-gray-200"}>
+      <span
+        className={
+          strong
+            ? "font-medium text-gray-900 dark:text-white"
+            : "text-gray-800 dark:text-gray-200"
+        }
+      >
         {value}
       </span>
     </div>

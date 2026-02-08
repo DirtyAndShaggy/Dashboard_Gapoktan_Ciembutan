@@ -9,10 +9,29 @@ import {
   CartesianGrid,
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Custom vertical legend (mobile)
@@ -38,6 +57,8 @@ function VerticalLegend({ payload }) {
 }
 
 export default function HarvestTrendChart({ data }) {
+  const { settings } = useSettings();
+
   if (!data || data.length === 0) {
     return (
       <div className="
@@ -49,21 +70,18 @@ export default function HarvestTrendChart({ data }) {
     );
   }
 
-  // Only keep last 5 most recent years
   const sortedData = [...data].sort(
     (a, b) => a.tahun - b.tahun
   );
 
   const recentData = sortedData.slice(-4);
 
-  // Dynamic varietas keys (exclude "tahun")
   const varietasKeys = Object.keys(recentData[0]).filter(
     key => key !== "tahun"
   );
 
   return (
     <div className="w-full">
-      {/* Chart */}
       <ResponsiveContainer width="100%" height={320}>
         <LineChart
           data={recentData}
@@ -81,8 +99,18 @@ export default function HarvestTrendChart({ data }) {
           />
 
           <YAxis
-            tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tick={{ fontSize: 12 }}
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -93,13 +121,19 @@ export default function HarvestTrendChart({ data }) {
               borderRadius: "8px"
             }}
             formatter={(value, name) => [
-              `${value.toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               name.replace(/_/g, " ")
             ]}
             labelFormatter={label => `Tahun: ${label}`}
           />
 
-          {/* Desktop legend (horizontal, under chart) */}
           <Legend
             className="hidden md:block"
             wrapperStyle={{ paddingTop: 12 }}

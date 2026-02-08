@@ -9,12 +9,31 @@ import {
   Cell
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
 
 import { useIsMobile } from "@/utils/useIsMobile";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Custom vertical legend (mobile)
@@ -66,6 +85,7 @@ function MultilineXAxisTick({ x, y, payload }) {
 
 export default function TotalPanenByVarietasChart({ data }) {
   const isMobile = useIsMobile();
+  const { settings } = useSettings();
 
   if (!data || data.length === 0) {
     return (
@@ -97,7 +117,6 @@ export default function TotalPanenByVarietasChart({ data }) {
             className="text-gray-200 dark:text-gray-700"
           />
 
-          {/* Desktop only X-axis labels */}
           <XAxis
             dataKey="varietas"
             interval={0}
@@ -113,6 +132,16 @@ export default function TotalPanenByVarietasChart({ data }) {
             tick={{ fontSize: 12 }}
             stroke="currentColor"
             className="text-gray-500 dark:text-gray-400"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -122,7 +151,14 @@ export default function TotalPanenByVarietasChart({ data }) {
               border: "1px solid rgba(0,0,0,0.1)"
             }}
             formatter={value => [
-              `${Math.round(value).toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               "Total Panen"
             ]}
             labelFormatter={label =>
@@ -144,7 +180,6 @@ export default function TotalPanenByVarietasChart({ data }) {
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Mobile legend ONLY */}
       {isMobile && (
         <div className="mt-3">
           <VerticalLegend

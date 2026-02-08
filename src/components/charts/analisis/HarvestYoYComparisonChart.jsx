@@ -9,6 +9,12 @@ import {
   CartesianGrid,
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 import {
   VARIETAS_COLORS,
   DEFAULT_VARIETAS_COLOR
@@ -19,11 +25,26 @@ import {
 ---------------------------- */
 const MAX_YEARS = 5;
 
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
+
 export default function HarvestYoYComparisonChart({
   panen,
   kelompokTani,
   tahun // contextual only, NOT a filter
 }) {
+  const { settings } = useSettings();
+
   /* ----------------------------
      Step 1: filter by farmer group ONLY
      (INTENTIONALLY ignoring season)
@@ -119,6 +140,16 @@ export default function HarvestYoYComparisonChart({
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -129,7 +160,14 @@ export default function HarvestYoYComparisonChart({
               borderRadius: "8px"
             }}
             formatter={(value, name) => [
-              `${value.toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               name.replace(/_/g, " ")
             ]}
             labelFormatter={label => `Tahun: ${label}`}

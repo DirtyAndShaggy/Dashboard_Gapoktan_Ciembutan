@@ -9,11 +9,30 @@ import {
   CartesianGrid
 } from "recharts";
 
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel,
+} from "@/utils/unitFormatter";
+
 /* ----------------------------
    Config
 ---------------------------- */
 const MAX_YEARS = 5;
 const DEFAULT_COLOR = "#6366f1";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Generate stable colors per group
@@ -28,6 +47,8 @@ function stringToColor(str) {
 }
 
 export default function HarvestGroupTrendChart({ panen }) {
+  const { settings } = useSettings();
+
   if (!panen || !panen.length) {
     return (
       <div className="
@@ -102,7 +123,8 @@ export default function HarvestGroupTrendChart({ panen }) {
         text-gray-500
         dark:text-gray-400
       ">
-        Perbandingan hasil panen antar kelompok tani (kg)
+        Perbandingan hasil panen antar kelompok tani
+        ({formatWeightLabel(settings.weightUnit)})
       </p>
 
       <ResponsiveContainer width="100%" height={340}>
@@ -124,6 +146,16 @@ export default function HarvestGroupTrendChart({ panen }) {
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={(value) =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })
+            }
           />
 
           <Tooltip
@@ -134,7 +166,14 @@ export default function HarvestGroupTrendChart({ panen }) {
               borderRadius: "8px"
             }}
             formatter={(value, name) => [
-              `${value.toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                ),
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               name
             ]}
             labelFormatter={label => `Tahun: ${label}`}

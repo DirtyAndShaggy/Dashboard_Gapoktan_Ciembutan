@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import FinanceBanner from "@/components/banner/FinanceBanner";
-
 import TotalPanenByVarietasChart from "@/components/charts/dasbor/TotalPanenByVarietasChart";
 import ProduktivitasByVarietasChart from "@/components/charts/dasbor/ProduktivitasByVarietasChart";
 import HarvestTrendChart from "@/components/charts/dasbor/HarvestTrendChart";
+import { useSettings } from "@/context/SettingsContext";
+import { formatWeightLabel } from "@/utils/unitFormatter";
 
 import {
   getTotalPanenByVarietas,
@@ -79,6 +80,9 @@ export default function Dashboard() {
 
   const trendData = getTrendByVarietas(panen);
 
+  const { settings } = useSettings();
+
+
   /* ================= Render ================= */
   return (
     <div className="p-6 space-y-6">
@@ -116,7 +120,7 @@ export default function Dashboard() {
             Total Panen per Varietas
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Akumulasi hasil panen seluruh desa (kg)
+            Akumulasi hasil panen seluruh desa ({formatWeightLabel(settings.weightUnit)})
           </p>
 
           <TotalPanenByVarietasChart data={totalPanenData} />
@@ -132,7 +136,7 @@ export default function Dashboard() {
             Rata-rata Produktivitas Varietas
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Hasil panen per hektar lahan (kg/ha)
+            Hasil panen per hektar lahan ({formatWeightLabel(settings.weightUnit)}/ha)
           </p>
 
           <ProduktivitasByVarietasChart data={produktivitasData} />
@@ -149,7 +153,7 @@ export default function Dashboard() {
           Tren Panen Tahunan per Varietas
         </h3>
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-          Perkembangan total hasil panen dari waktu ke waktu (kg)
+          Perkembangan total hasil panen dari waktu ke waktu ({formatWeightLabel(settings.weightUnit)})
         </p>
 
         <HarvestTrendChart data={trendData} />

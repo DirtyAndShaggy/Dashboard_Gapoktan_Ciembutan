@@ -9,14 +9,32 @@ import {
 } from "recharts";
 
 import { useIsMobile } from "@/utils/useIsMobile";
+import { useSettings } from "@/context/SettingsContext";
+import {
+  formatWeight,
+  formatWeightLabel
+} from "@/utils/unitFormatter";
+
+/* ----------------------------
+   Helpers
+---------------------------- */
+function getDecimalByUnit(unit) {
+  switch (unit) {
+    case "ton":
+    case "kuintal":
+      return 1;
+    default:
+      return 0; // kg
+  }
+}
 
 /* ----------------------------
    Season colors
 ---------------------------- */
 const MUSIM_COLORS = {
-  MT1: "#3b82f6", // Rendeng
-  MT2: "#10b981", // Gadu
-  MT3: "#f59e0b"  // Kemarau
+  MT1: "#3b82f6",
+  MT2: "#10b981",
+  MT3: "#f59e0b"
 };
 
 const DEFAULT_MUSIM_COLOR = "#6366f1";
@@ -64,9 +82,10 @@ export default function TotalPanenGroupCurrentYearChart({
   tahun
 }) {
   const isMobile = useIsMobile();
+  const { settings } = useSettings();
 
   /* ----------------------------
-     Aggregate total harvest per season
+     Aggregate total harvest per season (kg)
   ---------------------------- */
   const map = {};
 
@@ -113,7 +132,7 @@ export default function TotalPanenGroupCurrentYearChart({
       </h3>
 
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-        Total hasil panen kelompok tani (kg)
+        Total hasil panen kelompok tani ({formatWeightLabel(settings.weightUnit)})
       </p>
 
       <ResponsiveContainer width="100%" height={250}>
@@ -139,6 +158,16 @@ export default function TotalPanenGroupCurrentYearChart({
           <YAxis
             tick={{ fontSize: 12 }}
             stroke="var(--chart-axis)"
+            tickFormatter={value =>
+              Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                )
+              })
+            }
           />
 
           <Tooltip
@@ -149,7 +178,14 @@ export default function TotalPanenGroupCurrentYearChart({
               borderRadius: "8px"
             }}
             formatter={value => [
-              `${value.toLocaleString()} kg`,
+              `${Number(
+                formatWeight(value, settings.weightUnit)
+              ).toLocaleString("id-ID", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: getDecimalByUnit(
+                  settings.weightUnit
+                )
+              })} ${formatWeightLabel(settings.weightUnit)}`,
               "Total Panen"
             ]}
             labelFormatter={label =>
@@ -171,7 +207,6 @@ export default function TotalPanenGroupCurrentYearChart({
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Mobile legend */}
       {isMobile && <MusimVerticalLegend data={data} />}
     </div>
   );
