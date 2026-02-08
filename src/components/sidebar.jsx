@@ -116,7 +116,7 @@ export default function Sidebar() {
               GAPOKTAN
             </h1>
             <p className="text-xs text-white tracking-wide font-brandSub">
-              KKN CIEMBUTAN
+              CIEMBUTAN
             </p>
           </div>
         </div>
