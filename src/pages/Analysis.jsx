@@ -137,7 +137,7 @@ export default function Analysis() {
         </p>
 
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {kelompokTani || "-"}
+          Kelompok Tani: {kelompokTani || "-"}
         </h2>
 
         <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-800 dark:text-gray-200">

@@ -6,6 +6,7 @@ export default function Settings() {
     settings,
     setTheme,
     setWeightUnit,
+    setLandUnit,
     resetSettings,
   } = useSettings();
 
@@ -67,6 +68,23 @@ export default function Settings() {
             <option value="kg">Kilogram (Kg)</option>
             <option value="ton">Ton</option>
             <option value="kuintal">Kuintal</option>
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-sm">Unit Luas Lahan</span>
+          <select
+            value={settings.landUnit}
+            onChange={(e) => setLandUnit(e.target.value)}
+            className="
+              border rounded px-2 py-1 text-sm
+              bg-white text-gray-900 border-gray-300
+              dark:bg-gray-700 dark:text-white dark:border-gray-600
+            "
+          >
+            <option value="ha">Hektar (Ha)</option>
+            <option value="are">Are</option>
+            <option value="m2">Meter Persegi (m²)</option>
           </select>
         </div>
       </section>

@@ -5,6 +5,7 @@ const SettingsContext = createContext(null);
 const DEFAULT_SETTINGS = {
   theme: "light", // 'light' | 'dark'
   weightUnit: "kg", // 'kg' | 'ton' | 'kuintal'
+  landUnit: "ha", // 'Hectare' | 'are' | 'm2'
   lastSync: null,
 };
 
@@ -45,6 +46,10 @@ export function SettingsProvider({ children }) {
 
     setWeightUnit(weightUnit) {
       setSettings((prev) => ({ ...prev, weightUnit }));
+    },
+
+    setLandUnit(landUnit) {
+        setSettings((prev) => ({ ...prev, landUnit }));
     },
 
     updateLastSync() {
