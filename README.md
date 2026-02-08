@@ -98,4 +98,4 @@ Mode offline sederhana
 Proyek ini dikembangkan untuk keperluan pendidikan dan pengabdian masyarakat
 (KKN dan administrasi desa).
 
-Deployed on Vercel
+Deployed on Vercel 2
