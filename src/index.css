@@ -2,9 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===============================
+   Base styles
+================================ */
 body {
   font-family: "Poppins", sans-serif;
 }
+
+/* ===============================
+   CSS variables (Light mode)
+   Used by charts, tooltips, SVGs
+================================ */
+:root {
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb; /* gray-200 */
+  --tooltip-text: #111827;   /* gray-900 */
+
+  --chart-grid: #e5e7eb;     /* gray-200 */
+  --chart-axis: #6b7280;     /* gray-500 */
+}
+
+/* ===============================
+   Dark mode overrides
+================================ */
+.dark {
+  --tooltip-bg: #1f2937;     /* gray-800 */
+  --tooltip-border: #374151; /* gray-700 */
+  --tooltip-text: #f9fafb;   /* gray-50 */
+
+  --chart-grid: #374151;     /* gray-700 */
+  --chart-axis: #9ca3af;     /* gray-400 */
+}
+
+/* ===============================
+   Fonts
+================================ */
 
 /* === Helvetica Rounded (Logo title) === */
 @font-face {

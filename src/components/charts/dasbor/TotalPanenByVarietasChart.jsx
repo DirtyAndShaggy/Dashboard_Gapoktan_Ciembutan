@@ -30,7 +30,7 @@ function VerticalLegend({ payload }) {
             className="inline-block w-3 h-3 rounded-sm"
             style={{ backgroundColor: item.color }}
           />
-          <span className="text-gray-700">
+          <span className="text-gray-700 dark:text-gray-300">
             {item.value.replace(/_/g, " ")}
           </span>
         </div>
@@ -46,7 +46,8 @@ function MultilineXAxisTick({ x, y, payload }) {
     <g transform={`translate(${x},${y + 10})`}>
       <text
         textAnchor="middle"
-        fill="#4b5563"
+        fill="currentColor"
+        className="text-gray-600 dark:text-gray-300"
         fontSize={12}
       >
         {words.map((word, index) => (
@@ -63,13 +64,16 @@ function MultilineXAxisTick({ x, y, payload }) {
   );
 }
 
-
 export default function TotalPanenByVarietasChart({ data }) {
   const isMobile = useIsMobile();
 
   if (!data || data.length === 0) {
     return (
-      <div className="text-sm text-gray-400 text-center py-10">
+      <div className="
+        text-sm text-center py-10 rounded-lg
+        text-gray-400
+        dark:text-gray-500
+      ">
         Tidak ada data panen
       </div>
     );
@@ -87,7 +91,11 @@ export default function TotalPanenByVarietasChart({ data }) {
             bottom: isMobile ? 10 : 30
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="currentColor"
+            className="text-gray-200 dark:text-gray-700"
+          />
 
           {/* Desktop only X-axis labels */}
           <XAxis
@@ -95,14 +103,24 @@ export default function TotalPanenByVarietasChart({ data }) {
             interval={0}
             tick={isMobile ? false : <MultilineXAxisTick />}
             axisLine={!isMobile}
+            tickLine={!isMobile}
+            stroke="currentColor"
+            className="text-gray-500 dark:text-gray-400"
             height={isMobile ? 0 : 30}
           />
 
           <YAxis
-             tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12 }}
+            stroke="currentColor"
+            className="text-gray-500 dark:text-gray-400"
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--tooltip-bg)",
+              borderRadius: "8px",
+              border: "1px solid rgba(0,0,0,0.1)"
+            }}
             formatter={value => [
               `${Math.round(value).toLocaleString()} kg`,
               "Total Panen"
