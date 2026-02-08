@@ -119,3 +119,5 @@ Mode offline sederhana
 📄 Lisensi
 Proyek ini dikembangkan untuk keperluan pendidikan dan pengabdian masyarakat
 (KKN dan administrasi desa).
+
+Deployed on Vercel
