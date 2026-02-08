@@ -20,6 +20,8 @@ import {
   DEFAULT_VARIETAS_COLOR
 } from "@/constants/varietasColors";
 
+import { useMemo } from "react";
+
 /* ----------------------------
    Helpers
 ---------------------------- */
@@ -70,11 +72,13 @@ export default function HarvestTrendChart({ data }) {
     );
   }
 
-  const sortedData = [...data].sort(
-    (a, b) => a.tahun - b.tahun
-  );
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => a.tahun - b.tahun);
+  }, [data]);
 
-  const recentData = sortedData.slice(-4);
+  const recentData = useMemo(() => {
+    return sortedData.slice(-4);
+  }, [sortedData]);
 
   const varietasKeys = Object.keys(recentData[0]).filter(
     key => key !== "tahun"

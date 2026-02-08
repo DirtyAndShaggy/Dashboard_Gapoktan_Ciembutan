@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import FinanceBanner from "@/components/banner/FinanceBanner";
 import TotalPanenByVarietasChart from "@/components/charts/dasbor/TotalPanenByVarietasChart";
 import ProduktivitasByVarietasChart from "@/components/charts/dasbor/ProduktivitasByVarietasChart";
 import HarvestTrendChart from "@/components/charts/dasbor/HarvestTrendChart";
 import { useSettings } from "@/context/SettingsContext";
 import { formatWeightLabel } from "@/utils/unitFormatter";
+import { getDashboardData } from "@/lib/dashboardCache";
 
 import {
   getTotalPanenByVarietas,
@@ -13,28 +14,68 @@ import {
 } from "@/utils/panenStats";
 
 export default function Dashboard() {
+  const { settings } = useSettings();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   /* ================= Fetch data ================= */
   useEffect(() => {
-    fetch(
-      "https://script.google.com/macros/s/AKfycbzE3jVybeiMFm23WAJcvPGu8Q23rdnzNwVkpFI3CTfACgGowF45slDyK5AFgTkiY8lI/exec"
-    )
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch dashboard data");
-        return res.json();
-      })
-      .then(json => {
-        setDashboardData(json);
+    let mounted = true;
+
+    getDashboardData()
+      .then(data => {
+        if (!mounted) return;
+        setDashboardData(data);
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message);
+        if (!mounted) return;
+        setError(err.message || "Failed to load analysis data");
         setLoading(false);
       });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  /* ================= Derived data (HOOKS MUST BE HERE) ================= */
+  const panen = dashboardData?.panen ?? [];
+  const banner = dashboardData?.banner;
+  const keuangan = dashboardData?.keuangan;
+
+  const years = useMemo(() => {
+    return [...new Set(
+      panen.map(p => Number(p.tahun)).filter(Boolean)
+    )];
+  }, [panen]);
+
+  const currentYear = useMemo(
+    () => (years.length ? Math.max(...years) : null),
+    [years]
+  );
+
+  const totalPanenData = useMemo(
+    () =>
+      currentYear
+        ? getTotalPanenByVarietas(panen, currentYear)
+        : [],
+    [panen, currentYear]
+  );
+
+  const produktivitasData = useMemo(
+    () =>
+      currentYear
+        ? getAvgProduktivitasByVarietas(panen, currentYear)
+        : [],
+    [panen, currentYear]
+  );
+
+  const trendData = useMemo(
+    () => getTrendByVarietas(panen),
+    [panen]
+  );
 
   /* ================= States ================= */
   if (loading) {
@@ -61,101 +102,52 @@ export default function Dashboard() {
     );
   }
 
-  /* ================= Derived data ================= */
-  const { panen, banner, keuangan } = dashboardData;
-
-  const years = panen
-    .map(item => Number(item.tahun))
-    .filter(Boolean);
-
-  const currentYear = years.length ? Math.max(...years) : null;
-
-  const totalPanenData = currentYear
-    ? getTotalPanenByVarietas(panen, currentYear)
-    : [];
-
-  const produktivitasData = currentYear
-    ? getAvgProduktivitasByVarietas(panen, currentYear)
-    : [];
-
-  const trendData = getTrendByVarietas(panen);
-
-  const { settings } = useSettings();
-
-
   /* ================= Render ================= */
   return (
     <div className="p-6 space-y-6">
-
-      {/* ================= Banner ================= */}
       <FinanceBanner banner={banner} keuangan={keuangan} />
 
-      {/* ================= Dashboard Context ================= */}
-      <div className="
-        rounded-xl p-4 border
-        bg-indigo-50 border-gray-200
-        dark:bg-indigo-900/30 dark:border-gray-700
-      ">
+      <div className="rounded-xl p-4 border bg-indigo-50 dark:bg-indigo-900/30">
         <p className="text-sm text-gray-600 dark:text-gray-400">
           Ringkasan Panen Desa
         </p>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h2 className="text-lg font-semibold">
           Tahun {currentYear || "-"}
         </h2>
-        <p className="text-xs text-gray-700 dark:text-gray-400 mt-1">
+        <p className="text-xs mt-1">
           Data seluruh kelompok tani
         </p>
       </div>
 
-      {/* ================= Main Charts ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        {/* Total harvest */}
-        <div className="
-          rounded-xl p-4 shadow-sm border
-          bg-white border-gray-200
-          dark:bg-gray-800 dark:border-gray-700
-        ">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-100">
+        <div className="rounded-xl p-4 border bg-white dark:bg-gray-800">
+          <h3 className="font-semibold">
             Total Panen per Varietas
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Akumulasi hasil panen seluruh desa ({formatWeightLabel(settings.weightUnit)})
+          <p className="text-xs mb-3">
+            ({formatWeightLabel(settings.weightUnit)})
           </p>
-
           <TotalPanenByVarietasChart data={totalPanenData} />
         </div>
 
-        {/* Productivity */}
-        <div className="
-          rounded-xl p-4 shadow-sm border
-          bg-white border-gray-200
-          dark:bg-gray-800 dark:border-gray-700
-        ">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-100">
+        <div className="rounded-xl p-4 border bg-white dark:bg-gray-800">
+          <h3 className="font-semibold">
             Rata-rata Produktivitas Varietas
           </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Hasil panen per hektar lahan ({formatWeightLabel(settings.weightUnit)}/ha)
+          <p className="text-xs mb-3">
+            ({formatWeightLabel(settings.weightUnit)}/ha)
           </p>
-
           <ProduktivitasByVarietasChart data={produktivitasData} />
         </div>
       </div>
 
-      {/* ================= Trend Chart ================= */}
-      <div className="
-        rounded-xl p-4 shadow-sm border
-        bg-white border-gray-200
-        dark:bg-gray-800 dark:border-gray-700
-      ">
-        <h3 className="font-semibold text-gray-800 dark:text-gray-100">
+      <div className="rounded-xl p-4 border bg-white dark:bg-gray-800">
+        <h3 className="font-semibold">
           Tren Panen Tahunan per Varietas
         </h3>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-          Perkembangan total hasil panen dari waktu ke waktu ({formatWeightLabel(settings.weightUnit)})
+        <p className="text-xs mb-3">
+          ({formatWeightLabel(settings.weightUnit)})
         </p>
-
         <HarvestTrendChart data={trendData} />
       </div>
     </div>

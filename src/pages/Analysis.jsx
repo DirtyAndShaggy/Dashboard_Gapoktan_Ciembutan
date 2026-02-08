@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import ProduktivitasGroupChart from "@/components/charts/analisis/ProduktivitasGroupChart";
 import HarvestYoYComparisonChart from "@/components/charts/analisis/HarvestYoYComparisonChart";
@@ -6,6 +6,9 @@ import TotalPanenGroupCurrentYearChart from "@/components/charts/analisis/TotalP
 import HarvestByFarmingMethodChart from "@/components/charts/analisis/HarvestByFarmingMethodChart";
 import TotalPanenByVarietasGroupChart from "@/components/charts/analisis/TotalPanenByVarietasGroupChart";
 import HarvestGroupTrendChart from "@/components/charts/analisis/HarvestGroupTrendChart";
+import { getDashboardData } from "@/lib/dashboardCache";
+
+
 
 export default function Analysis() {
   /* =========================================================
@@ -21,36 +24,63 @@ export default function Analysis() {
 
   const [showFilters, setShowFilters] = useState(false);
 
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth >= 640;
+  });
+
+
   /* =========================================================
      Fetch data
   ========================================================= */
   useEffect(() => {
-    fetch(
-      "https://script.google.com/macros/s/AKfycbzE3jVybeiMFm23WAJcvPGu8Q23rdnzNwVkpFI3CTfACgGowF45slDyK5AFgTkiY8lI/exec"
-    )
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch analysis data");
-        return res.json();
-      })
-      .then(json => {
-        setPanen(json.panen || []);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+    let mounted = true;
+
+    getDashboardData()
+    .then(data => {
+      if (!mounted) return;
+      setPanen(data.panen || []);
+      setLoading(false);
+    })
+    .catch(err => {
+      if (!mounted) return;
+      setError(err.message || "Failed to load analysis data");
+      setLoading(false);
+    });
+
+  return () => {
+    mounted = false;
+  };
   }, []);
+
+/* =========================================================
+   Handle screen resize
+========================================================= */
+useEffect(() => {
+  const onResize = () => {
+    setIsDesktop(window.innerWidth >= 640);
+  };
+
+  window.addEventListener("resize", onResize);
+
+  return () => {
+    window.removeEventListener("resize", onResize);
+  };
+}, []);
 
   /* =========================================================
      Derived filters
   ========================================================= */
-  const farmerGroups = [...new Set(panen.map(p => p.kelompokTani))];
+  const farmerGroups = useMemo(() => {
+    return [...new Set(panen.map(p => p.kelompokTani))];
+  }, [panen]);
 
-  const years = [...new Set(panen.map(p => Number(p.tahun)))]
+  const years = useMemo(() => {
+    return [...new Set(panen.map(p => Number(p.tahun)))]
     .filter(Boolean)
     .sort((a, b) => b - a)
     .slice(0, 10);
+  }, [panen]);
 
   /* =========================================================
      Init defaults
@@ -72,6 +102,41 @@ export default function Analysis() {
       setTahun(years[0] ?? null);
     }
   }, [years, tahun]);
+
+/* =========================================================
+   Persist filters
+========================================================= */
+useEffect(() => {
+  if (!kelompokTani || !tahun) return;
+
+  localStorage.setItem(
+    "analysisFilters",
+    JSON.stringify({
+      kelompokTani,
+      tahun,
+      musim
+    })
+  );
+}, [kelompokTani, tahun, musim]);
+
+/* =========================================================
+   Restore saved filters
+========================================================= */
+useEffect(() => {
+  const saved = localStorage.getItem("analysisFilters");
+
+  if (!saved) return;
+
+  try {
+    const parsed = JSON.parse(saved);
+
+    if (parsed.kelompokTani) setKelompokTani(parsed.kelompokTani);
+    if (parsed.tahun) setTahun(parsed.tahun);
+    if (parsed.musim) setMusim(parsed.musim);
+  } catch {
+    console.warn("Failed to restore filters");
+  }
+}, []);
 
   /* =========================================================
      States
@@ -168,7 +233,7 @@ export default function Analysis() {
       </button>
 
       {/* ================= Filters ================= */}
-      {(showFilters || window.innerWidth >= 640) && (
+      {(showFilters || isDesktop) && (
         <div className="
           rounded-xl p-4
           bg-white border border-gray-200

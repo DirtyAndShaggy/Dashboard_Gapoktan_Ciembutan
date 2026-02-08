@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useSettings } from "@/context/SettingsContext";
 import {
   formatWeight,
@@ -7,8 +7,11 @@ import {
   formatLandAreaLabel,
   formatNumber,
 } from "@/utils/unitFormatter";
+import { getDashboardData } from "@/lib/dashboardCache";
 
 export default function Harvest() {
+  
+  const hasRestored = useRef(false);
   /* =========================================================
      State
   ========================================================= */
@@ -26,21 +29,23 @@ export default function Harvest() {
      Fetch data
   ========================================================= */
   useEffect(() => {
-    fetch(
-      "https://script.google.com/macros/s/AKfycbzE3jVybeiMFm23WAJcvPGu8Q23rdnzNwVkpFI3CTfACgGowF45slDyK5AFgTkiY8lI/exec"
-    )
-      .then(res => {
-        if (!res.ok) throw new Error("Failed to fetch harvest data");
-        return res.json();
-      })
-      .then(json => {
-        setPanen(json.panen || []);
+   let mounted = true;
+
+    getDashboardData()
+      .then(data => {
+        if (!mounted) return;
+        setPanen(data.panen || []);
         setLoading(false);
-      })
+     })
       .catch(err => {
-        setError(err.message);
+        if (!mounted) return;
+        setError(err.message || "Failed to load harvest data");
         setLoading(false);
       });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   /* =========================================================
@@ -64,6 +69,49 @@ export default function Harvest() {
       return true;
     });
   }, [panen, tahun, musim, kelompokTani]);
+
+  /* =========================================================
+   Persist filters
+========================================================= */
+  useEffect(() => {
+    if (!hasRestored.current) return;
+
+    localStorage.setItem(
+      "harvestFilters",
+      JSON.stringify({
+        tahun,
+        musim,
+        kelompokTani
+      })
+    );
+  }, [tahun, musim, kelompokTani]);
+
+/* =========================================================
+   Restore filters (after data ready)
+========================================================= */
+  useEffect(() => {
+   if (!panen.length) return;        // ⬅ wait for data
+    if (hasRestored.current) return; // ⬅ only once
+
+    const saved = localStorage.getItem("harvestFilters");
+    if (!saved) {
+      hasRestored.current = true;
+      return;
+   }
+
+    try {
+      const parsed = JSON.parse(saved);
+
+      if (parsed.tahun) setTahun(parsed.tahun);
+      if (parsed.musim) setMusim(parsed.musim);
+      if (parsed.kelompokTani) setKelompokTani(parsed.kelompokTani);
+    } catch {
+      console.warn("Failed to restore harvest filters");
+    } finally {
+      hasRestored.current = true;
+    }
+  }, [panen]);
+
 
   /* =========================================================
      States
