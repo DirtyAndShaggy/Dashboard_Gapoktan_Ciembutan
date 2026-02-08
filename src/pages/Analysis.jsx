@@ -1,0 +1,369 @@
+import { useEffect, useState, useMemo } from "react";
+
+import ProduktivitasGroupChart from "@/components/charts/analisis/ProduktivitasGroupChart";
+import HarvestYoYComparisonChart from "@/components/charts/analisis/HarvestYoYComparisonChart";
+import TotalPanenGroupCurrentYearChart from "@/components/charts/analisis/TotalPanenGroupCurrentYearChart";
+import HarvestByFarmingMethodChart from "@/components/charts/analisis/HarvestByFarmingMethodChart";
+import TotalPanenByVarietasGroupChart from "@/components/charts/analisis/TotalPanenByVarietasGroupChart";
+import HarvestGroupTrendChart from "@/components/charts/analisis/HarvestGroupTrendChart";
+import { getDashboardData } from "@/lib/dashboardCache";
+
+
+
+export default function Analysis() {
+  /* =========================================================
+     State
+  ========================================================= */
+  const [panen, setPanen] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [kelompokTani, setKelompokTani] = useState("");
+  const [tahun, setTahun] = useState(null);
+  const [musim, setMusim] = useState("ALL");
+
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth >= 640;
+  });
+
+
+  /* =========================================================
+     Fetch data
+  ========================================================= */
+  useEffect(() => {
+    let mounted = true;
+
+    getDashboardData()
+    .then(data => {
+      if (!mounted) return;
+      setPanen(data.panen || []);
+      setLoading(false);
+    })
+    .catch(err => {
+      if (!mounted) return;
+      setError(err.message || "Failed to load analysis data");
+      setLoading(false);
+    });
+
+  return () => {
+    mounted = false;
+  };
+  }, []);
+
+/* =========================================================
+   Handle screen resize
+========================================================= */
+useEffect(() => {
+  const onResize = () => {
+    setIsDesktop(window.innerWidth >= 640);
+  };
+
+  window.addEventListener("resize", onResize);
+
+  return () => {
+    window.removeEventListener("resize", onResize);
+  };
+}, []);
+
+  /* =========================================================
+     Derived filters
+  ========================================================= */
+  const farmerGroups = useMemo(() => {
+    return [...new Set(panen.map(p => p.kelompokTani))];
+  }, [panen]);
+
+  const years = useMemo(() => {
+    return [...new Set(panen.map(p => Number(p.tahun)))]
+    .filter(Boolean)
+    .sort((a, b) => b - a)
+    .slice(0, 10);
+  }, [panen]);
+
+  /* =========================================================
+     Init defaults
+  ========================================================= */
+  useEffect(() => {
+    if (!panen.length) return;
+
+    if (!kelompokTani && farmerGroups.length) {
+      setKelompokTani(farmerGroups[0]);
+    }
+
+    if (!tahun && years.length) {
+      setTahun(years[0]);
+    }
+  }, [panen, farmerGroups, years]);
+
+  useEffect(() => {
+    if (tahun && !years.includes(tahun)) {
+      setTahun(years[0] ?? null);
+    }
+  }, [years, tahun]);
+
+/* =========================================================
+   Persist filters
+========================================================= */
+useEffect(() => {
+  if (!kelompokTani || !tahun) return;
+
+  localStorage.setItem(
+    "analysisFilters",
+    JSON.stringify({
+      kelompokTani,
+      tahun,
+      musim
+    })
+  );
+}, [kelompokTani, tahun, musim]);
+
+/* =========================================================
+   Restore saved filters
+========================================================= */
+useEffect(() => {
+  const saved = localStorage.getItem("analysisFilters");
+
+  if (!saved) return;
+
+  try {
+    const parsed = JSON.parse(saved);
+
+    if (parsed.kelompokTani) setKelompokTani(parsed.kelompokTani);
+    if (parsed.tahun) setTahun(parsed.tahun);
+    if (parsed.musim) setMusim(parsed.musim);
+  } catch {
+    console.warn("Failed to restore filters");
+  }
+}, []);
+
+  /* =========================================================
+     States
+  ========================================================= */
+  if (loading) {
+    return (
+      <div className="p-6 text-gray-500 dark:text-gray-400">
+        Loading analysis data…
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-red-500 dark:text-red-400">
+        Failed to load analysis data: {error}
+      </div>
+    );
+  }
+
+  if (!panen.length) {
+    return (
+      <div className="p-6 text-gray-500 dark:text-gray-400">
+        No harvest data available.
+      </div>
+    );
+  }
+
+  /* =========================================================
+     Render
+  ========================================================= */
+  return (
+    <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+
+      {/* ================= Header ================= */}
+      <div>
+        <h1 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
+          Analisis Kelompok Tani
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Analisis hasil panen dan produktivitas per kelompok tani
+        </p>
+      </div>
+
+      {/* ================= Mobile Context ================= */}
+      <div className="
+        sm:hidden rounded-lg px-3 py-2 text-sm
+        bg-indigo-50 text-gray-800
+        dark:bg-indigo-900/30 dark:text-gray-200
+      ">
+        <span className="font-medium">{kelompokTani}</span> · {tahun} ·{" "}
+        {musim === "ALL" ? "Semua Musim" : musim}
+      </div>
+
+      {/* ================= Desktop Context ================= */}
+      <div className="
+        hidden sm:block rounded-xl p-4
+        bg-indigo-50 border border-indigo-100
+        dark:bg-indigo-900/30 dark:border-indigo-800
+      ">
+        <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
+          Konteks Analisis
+        </p>
+
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Kelompok Tani: {kelompokTani || "-"}
+        </h2>
+
+        <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-800 dark:text-gray-200">
+          <div>
+            <span className="font-medium">Tahun:</span>{" "}
+            {tahun ?? "-"}
+          </div>
+
+          <div>
+            <span className="font-medium">Musim:</span>{" "}
+            {musim === "ALL"
+              ? "Semua Musim"
+              : musim === "MT1"
+              ? "MT1 (Rendeng)"
+              : musim === "MT2"
+              ? "MT2 (Gadu)"
+              : "MT3 (Kemarau)"}
+          </div>
+        </div>
+      </div>
+
+      {/* ================= Mobile Filter Toggle ================= */}
+      <button
+        className="sm:hidden text-sm text-indigo-600 dark:text-indigo-400"
+        onClick={() => setShowFilters(v => !v)}
+      >
+        {showFilters ? "Sembunyikan Filter" : "Tampilkan Filter"}
+      </button>
+
+      {/* ================= Filters ================= */}
+      {(showFilters || isDesktop) && (
+        <div className="
+          rounded-xl p-4
+          bg-white border border-gray-200
+          dark:bg-gray-800 dark:border-gray-700
+        ">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
+            Filter Analisis
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Kelompok Tani */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                Kelompok Tani
+              </label>
+              <select
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
+                value={kelompokTani}
+                onChange={e => setKelompokTani(e.target.value)}
+              >
+                {farmerGroups.map(k => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Tahun */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                Tahun
+              </label>
+              <select
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
+                value={tahun ?? ""}
+                onChange={e => setTahun(Number(e.target.value))}
+              >
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Musim */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                Musim Tanam
+              </label>
+              <select
+                className="
+                  border rounded px-3 py-2 text-sm
+                  bg-white text-gray-900 border-gray-300
+                  dark:bg-gray-700 dark:text-white dark:border-gray-600
+                "
+                value={musim}
+                onChange={e => setMusim(e.target.value)}
+              >
+                <option value="ALL">Semua Musim</option>
+                <option value="MT1">MT1 (Rendeng)</option>
+                <option value="MT2">MT2 (Gadu)</option>
+                <option value="MT3">MT3 (Kemarau)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= Charts ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
+        <div className="min-h-[260px]">
+          <ProduktivitasGroupChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <HarvestYoYComparisonChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <TotalPanenGroupCurrentYearChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <HarvestByFarmingMethodChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
+
+        <div className="min-h-[260px]">
+          <TotalPanenByVarietasGroupChart
+            panen={panen}
+            kelompokTani={kelompokTani}
+            tahun={tahun}
+            musim={musim}
+          />
+        </div>
+      </div>
+
+      {/* ================= Comparison ================= */}
+      <div className="space-y-3">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Perbandingan Antar Kelompok Tani
+        </h2>
+
+        <div className="min-h-[280px] sm:min-h-[360px]">
+          <HarvestGroupTrendChart panen={panen} />
+        </div>
+      </div>
+    </div>
+  );
+}
