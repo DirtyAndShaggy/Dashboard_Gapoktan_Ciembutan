@@ -189,8 +189,8 @@ export default function Settings() {
             </h3>
             <p className="mt-1">
               Aplikasi ini dikembangkan sebagai bagian dari kegiatan pendidikan
-              dan pengabdian kepada masyarakat (KKN), serta untuk mendukung
-              sistem administrasi dan pengelolaan data pertanian desa.
+              dan pengabdian kepada masyarakat (KKN) Universitas Sebelas April, serta untuk mendukung
+              sistem administrasi dan pengelolaan data pertanian desa Cikurubuk.
             </p>
           </div>
 
@@ -204,6 +204,9 @@ export default function Settings() {
             </p>
             <p className="mt-1">
               Andika Bangkit Pratama
+            </p>
+            <p className="mt-1">
+              Rafly Maulana Yusuf
             </p>
             <p>
               © {new Date().getFullYear()}
