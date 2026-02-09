@@ -90,8 +90,8 @@ export default function Harvest() {
    Restore filters (after data ready)
 ========================================================= */
   useEffect(() => {
-   if (!panen.length) return;        // ⬅ wait for data
-    if (hasRestored.current) return; // ⬅ only once
+   if (!panen.length) return;        //  wait for data
+    if (hasRestored.current) return; //  only once
 
     const saved = localStorage.getItem("harvestFilters");
     if (!saved) {
